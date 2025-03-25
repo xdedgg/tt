@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APP页面</title>
+    <title>模拟app demo</title>
     <style>
         
       
@@ -771,7 +771,7 @@
         .oss-ip-input {
             width: 22%;
             max-width: 80px;
-            height: 50px;
+            height: 30px;
             text-align: center;
             font-size: 1.5rem;
             border: 1px solid #e0e0e0;
@@ -951,6 +951,8 @@
         @keyframes oss-spin {
             to { transform: rotate(360deg); }
         }
+
+
     </style>
 </head>
 <body>
@@ -1144,43 +1146,44 @@
                 <h1 class="oss-h1"><span>局端新增</span><span>局端更换</span>
                     <span class="underline">局端信息查询</span></h1>
                 
-                <div class="oss-ip-input-container">
-                    <div class="oss-ip-input-header">
-                        <span class="oss-ip-input-label">请输入IP地址：</span>
-                        <button class="oss-query-btn" id="ossQueryBtn">查询</button>
-                    </div>
-                    <div class="oss-ip-input-fields">
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                    </div>
-                    
-                    <div id="ossBasicInfoContainer" style="display: none;">
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">设备名称：</span>
-                            <span class="oss-result-value" id="ossDeviceName">-</span>
+                    <div class="oss-ip-input-container">
+                        
+                        <div class="oss-ip-input-header">
+                            <span class="oss-ip-input-label">请输入IP地址：</span>
+                            <button class="oss-query-btn" id="ossQueryBtn">查询</button>
                         </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">MAC地址：</span>
-                            <span class="oss-result-value" id="ossMacAddress">-</span>
+                        <div class="oss-ip-input-fields">
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
                         </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">在线时长：</span>
-                            <span class="oss-result-value" id="ossOnlineTime">-</span>
-                        </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">在线用户：</span>
-                            <span class="oss-result-value">
-                                <a href="javascript:void(0);" class="oss-user-count-link" id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
-                            </span>
-                        </div>
+                        
+                        <div id="ossBasicInfoContainer" style="display: none;">
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">设备名称：</span>
+                                <span class="oss-result-value" id="ossDeviceName">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">MAC地址：</span>
+                                <span class="oss-result-value" id="ossMacAddress">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线时长：</span>
+                                <span class="oss-result-value" id="ossOnlineTime">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线用户：</span>
+                                <span class="oss-result-value">
+                                    <a href="javascript:void(0);" class="oss-user-count-link" id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
+                                </span>
+                            </div>
+                        mac
                     </div>
                 </div>
-                
                 <div class="oss-user-table-container" id="ossUserTableContainer">
                     <table class="oss-user-table">
                         <thead>
@@ -1334,7 +1337,6 @@
         <span>数据</span>
     </div>
 </div>
-
 
 
 <script>
@@ -1623,12 +1625,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 模拟数据 - 20户
             const ossMockData = {
-                deviceName: '万达宿舍二期4#2门',
-                macAddress: '3C-62-78-01-17-FE',
+                deviceName: '滨海宿舍二期4#2门',
+                macAddress: '9C-92-98-99-1E-1E',
                 onlineTime: '100天05小时04分01秒',
                 userCount: 20,
                 users: Array(20).fill().map((_, i) => ({
-                    mac: '00231F1B4C' + (i+1).toString().padStart(2, '0'),
+                    mac: '00999F1AAA' + (i+1).toString().padStart(2, '0'),
                     attenuation: (40 + i%5) + 'dB',
                     phySpeed: '224/246 Mbps',
                     code: '123456789' + (i+1).toString().padStart(3, '0'),
@@ -1750,4 +1752,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 </body>
-</html>
+</html>  
