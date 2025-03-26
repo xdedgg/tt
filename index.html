@@ -279,7 +279,7 @@
             height: 100%;
             /* 高度为content的100% */
             position: absolute;
-            /* 改为相对定位 */
+            /* 改为绝对定位 */
             width: 100%;
             /* 宽度为100% */
         }
@@ -843,9 +843,6 @@
 
 
         /*模拟OSS页面样式*/
-
-
-
         /* 滚动到顶部/底部时调整轨道边距 */
         .oss-container::-webkit-scrollbar-track:vertical:start {
             margin-top: 4px;
@@ -918,7 +915,7 @@
             background-color: white;
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border: 1px solid #e0e0e0;
 
@@ -1030,7 +1027,7 @@
         }
 
         .oss-user-table-container {
-            margin-top: 15px;
+            margin-top: 3px;
             display: none;
             width: 100%;
             overflow-x: auto;
@@ -1129,19 +1126,23 @@
                 transform: rotate(360deg);
             }
         }
+
         /* oss设置折叠按钮折叠局端信息为了下面的详情空间更大 */
         .oss-coll-btn {
-            background-color: transparent; /* 设置背景为透明 */
-            color: black; /* 设置文字颜色为黑色 */
-            border: none; /* 去掉边框 */
-            padding: 10px 20px;
+            background-color: transparent;
+            /* 设置背景为透明 */
+            color: black;
+            /* 设置文字颜色为黑色 */
+            border: none;
+            /* 去掉边框 */
+            padding: 0px 20px 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            outline: none; /* 去掉点击时的边框 */
-        }
-        
+            outline: none;
+            /* 去掉点击时的边框 */
         }
 
+        
     </style>
 </head>
 
@@ -1337,47 +1338,51 @@
             <div class="oss-container">
 
 
-            <div><button class="oss-coll-btn" id="osscollBtn">&#8722;</button>        
-                <div class="oss-ip-input-container" id="ossInputContainer">
+                <div><button class="oss-coll-btn" id="osscollBtn">&#8722;</button>
+                    <div class="oss-ip-input-container" id="ossInputContainer">
 
-                    <div class="oss-ip-input-header">
-                        <span class="oss-ip-input-label">请输入IP地址：</span>
-                        <button class="oss-query-btn" id="ossQueryBtn">查询</button>
-                    </div>
-                    <div class="oss-ip-input-fields">
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="" inputmode="numeric">
-                        <span class="oss-ip-dot">.</span>
-                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="" inputmode="numeric">
-                    </div>
-
-                    <div id="ossBasicInfoContainer" style="display: none;">
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">设备名称：</span>
-                            <span class="oss-result-value" id="ossDeviceName">-</span>
+                        <div class="oss-ip-input-header">
+                            <span class="oss-ip-input-label">请输入IP地址：</span>
+                            <button class="oss-query-btn" id="ossQueryBtn">查询</button>
                         </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">MAC地址：</span>
-                            <span class="oss-result-value" id="ossMacAddress">-</span>
-                        </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">在线时长：</span>
-                            <span class="oss-result-value" id="ossOnlineTime">-</span>
-                        </div>
-                        <div class="oss-result-item">
-                            <span class="oss-result-label">在线用户：</span>
-                            <span class="oss-result-value">
-                                <a href="javascript:void(0);" class="oss-user-count-link"
-                                    id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
-                            </span>
+                        <div class="oss-ip-input-fields">
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
                         </div>
 
+                        <div id="ossBasicInfoContainer" style="display: none;">
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">设备名称：</span>
+                                <span class="oss-result-value" id="ossDeviceName">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">MAC地址：</span>
+                                <span class="oss-result-value" id="ossMacAddress">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线时长：</span>
+                                <span class="oss-result-value" id="ossOnlineTime">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线用户：</span>
+                                <span class="oss-result-value">
+                                    <a href="javascript:void(0);" class="oss-user-count-link"
+                                        id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
+                                </span>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </div>     
                 <div class="oss-user-table-container" id="ossUserTableContainer">
                     <table class="oss-user-table">
                         <thead>
@@ -1943,7 +1948,7 @@
                 }
             });
         });
-        
+
         // OSS折叠按钮相关事件
         // 获取按钮和内容容器
         const button = document.getElementById('osscollBtn');
@@ -1966,9 +1971,9 @@
             // 切换标志变量的值
             isCollapsed = !isCollapsed;
         });
-        
-        
-        
+
+
+
         // 动态计算设备底部圆角
         function setSafeAreaPadding() {
             const bottomPadding = window.innerHeight - document.documentElement.clientHeight;
