@@ -1129,6 +1129,23 @@
                 transform: rotate(360deg);
             }
         }
+        /* oss设置折叠按钮折叠局端信息为了下面的详情空间更大 */
+        .oss-coll-btn {
+            background-color: transparent; /* 设置背景为透明 */
+            color: black; /* 设置文字颜色为黑色 */
+            border: none; /* 去掉边框 */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none; /* 去掉点击时的边框 */
+        }
+        .content {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
     </style>
 </head>
 
@@ -1324,8 +1341,8 @@
             <div class="oss-container">
 
 
-
-                <div class="oss-ip-input-container">
+            <div><button class="oss-coll-btn" id="osscollBtn">&#8722;</button>        
+                <div class="oss-ip-input-container" id="ossInputContainer">
 
                     <div class="oss-ip-input-header">
                         <span class="oss-ip-input-label">请输入IP地址：</span>
@@ -1364,6 +1381,7 @@
 
                     </div>
                 </div>
+            </div>     
                 <div class="oss-user-table-container" id="ossUserTableContainer">
                     <table class="oss-user-table">
                         <thead>
@@ -1929,6 +1947,32 @@
                 }
             });
         });
+        
+        // OSS折叠按钮相关事件
+        // 获取按钮和内容容器
+        const button = document.getElementById('osscollBtn');
+        const container = document.getElementById('ossInputContainer');
+
+        // 定义一个标志变量，用于记录内容是否展开
+        let isCollapsed = false; // 初始状态为展开
+
+        // 添加点击事件监听器
+        button.addEventListener('click', () => {
+            if (isCollapsed) {
+                // 如果内容是收起的，展开所有内容块
+                container.style.display = 'block';
+                button.innerHTML = '&#8722;'; // 更改按钮图标为减号
+            } else {
+                // 如果内容是展开的，收起所有内容块
+                container.style.display = 'none';
+                button.innerHTML = '&#9776;'; // 更改按钮图标为汉堡菜单
+            }
+            // 切换标志变量的值
+            isCollapsed = !isCollapsed;
+        });
+        
+        
+        
         // 动态计算设备底部圆角
         function setSafeAreaPadding() {
             const bottomPadding = window.innerHeight - document.documentElement.clientHeight;
