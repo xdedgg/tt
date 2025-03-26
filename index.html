@@ -217,7 +217,7 @@
             /* 未激活状态的图标和文字为灰色 */
         }
 
-        /* 网格页面样式 - 数据页面 */
+        /*  数据页面 */
         .grid-container {
             display: flex;
             justify-content: space-around;
@@ -664,7 +664,7 @@
         }
 
 
-        /* 新增样式 - 潜客挖掘报表页面 */
+        /* 新增样式 - 营销向导报表页面 */
         .report-overlay {
             display: none;
             position: fixed;
@@ -1222,13 +1222,13 @@
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <p>这是首页的悬浮文本框1 - 第二页-5G情况</p>
+                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第2页 - </p>
                     </div>
                     <div class="carousel-item">
-                        <p>这是首页的悬浮文本框1 - 第三页-OSS</p>
+                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第3页 -</p>
                     </div>
                     <div class="carousel-item">
-                        <p>这是首页的悬浮文本框1 - 第四页</p>
+                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第1页 -</p>
                     </div>
                 </div>
                 <div class="carousel-indicators">
@@ -1244,7 +1244,7 @@
                 <span>工单任务</span> <!-- 文字 -->
             </div>
             <div class="floating-box">
-                <p>故障工单 0 业务受理工单 0 营销工单 0</p>
+                <p>显示各类客服工单数量（此处不变）</p>
             </div>
 
             <div class="box-title">
@@ -1252,14 +1252,14 @@
                 <span>常用菜单</span> <!-- 文字 -->
             </div>
             <div class="floating-box">
-                <p>📩 🏢 📝</p>
+                <p>提供快捷功能入口（此处不变）</p>
             </div>
         </div>
         <div id="business" class="page hidden">
             <!-- 业务页面的新增内容 -->
             <div class="business-container">
-                <div class="gray-box">
-                    <div class="square-box" onclick="toggleSquareBox(this, '固网')">固网</div> <!-- 第一个正方形文本框 -->
+                <div class="gray-box active">
+                    <div class="square-box active" onclick="toggleSquareBox(this, '固网')">固网</div> <!-- 第一个正方形文本框 -->
                     <div class="square-box" onclick="toggleSquareBox(this, '移网个人')">移网<br>个人</div>
                     <!-- 第二个正方形文本框 -->
                     <div class="square-box" onclick="toggleSquareBox(this, '移网集团')">移网<br>集团</div>
@@ -1267,7 +1267,8 @@
                     <div class="square-box" onclick="toggleSquareBox(this, '审核')">审核</div> <!-- 第四个正方形文本框 -->
                 </div>
                 <!-- 右侧内容区域 -->
-                <div id="right-content-固网" class="right-content">
+                <div id="right-content-固网" class="right-content active">
+                    <div class="dashed-box"><p class="zhushi-text">此部分不变</p></div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📁</i><span>固功1</span></div>
                         <div class="grid-item"><i>📊</i><span>固功2</span></div>
@@ -1281,6 +1282,7 @@
                     </div>
                 </div>
                 <div id="right-content-移网个人" class="right-content">
+                    <div class="dashed-box"><p class="zhushi-text">此部分不变</p></div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📱</i><span>移功1</span></div>
                         <div class="grid-item"><i>📶</i><span>移功2</span></div>
@@ -1294,8 +1296,9 @@
                     </div>
                 </div>
                 <div id="right-content-移网集团" class="right-content">
+                    <div class="dashed-box"><p class="zhushi-text">此部分如给代理商使用集团成员激活要特别注意权限设置</p></div>
                     <div class="grid-9">
-                        <div class="grid-item"><i>🏢</i><span>集团激活成员</span></div>
+                        <div class="grid-item"><i>🏢</i><span>集团成员激活</span></div>
                         <div class="grid-item"><i>👥</i><span>集团功能2</span></div>
                         <div class="grid-item"><i>📊</i><span>集团功能3</span></div>
                         <div class="grid-item"><i>📅</i><span>集团功能4</span></div>
@@ -1408,19 +1411,31 @@
 
         </div>
         <div id="workorder" class="page hidden">
-            <p>不变呀不变！</p>
+            <p>客服工单页面功能不变</p>
         </div>
         <div id="grid" class="page hidden">
             <div class="grid-container">
                 <div class="grid-item active" onclick="showGridContent('realtime')">业绩追踪</div>
-                <div class="grid-item" onclick="showGridContent('marketing')">潜客挖掘</div>
-                <div class="grid-item" onclick="showGridContent('trend')">趋势预测</div>
-                <div class="grid-item" onclick="showGridContent('custom')">智能查询</div>
+                <div class="grid-item" onclick="showGridContent('marketing')">营销向导</div>
+                <div class="grid-item" onclick="showGridContent('trend')">智能推荐</div>
+                <div class="grid-item" onclick="showGridContent('custom')">智能魔方</div>
             </div>
             <div id="grid-content" class="hidden">
                 <p id="grid-content-text">点击选择内容</p>
-                <!-- 新增潜客挖掘报表列表 -->
-
+            <!-- 业绩追踪报表内容 -->
+            <div id="realtime-reports" class="hidden">
+                <div class="dashed-box">
+                    <p class="zhushi-text">
+                        <!-- 这里是您的注释文字 -->
+                        这是一个使用虚线边框的注释文本框。<br>
+                        设计简洁，专为手机浏览优化，<br>
+                        虚线边框提供轻量级的视觉提示。
+                    </p>
+                </div>
+            </div>    
+                
+                
+                <!-- 营销向导报表列表 -->
                 <div id="marketing-reports" class="hidden">
                     <div class="report-list">
                         <!-- 圆环 -->
@@ -1458,7 +1473,7 @@
             </div>
         </div>
 
-        <!-- 新增潜客挖掘报表弹出页面 -->
+        <!-- 新增营销向导报表弹出页面 -->
         <div id="report-overlay" class="report-overlay">
             <div class="report-header">
                 <h2 id="report-title">报表标题</h2>
@@ -1568,36 +1583,8 @@
             }
         }
 
-        // 切换网格内容的函数
-        function showGridContent(contentId) {
-            const gridItems = document.querySelectorAll('.grid-item');
-            gridItems.forEach(item => {
-                item.classList.remove('active'); // 移除所有active类
-            });
-            const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
-            if (activeItem) {
-                activeItem.classList.add('active'); // 为当前点击的项添加active类
-            }
-            const gridContentText = document.getElementById('grid-content-text');
-            switch (contentId) {
-                case 'realtime':
-                    gridContentText.textContent = '这里是业绩追踪的内容';
-                    break;
-                case 'marketing':
-                    gridContentText.textContent = '这里是潜客挖掘的内容';
-                    break;
-                case 'trend':
-                    gridContentText.textContent = '这里是趋势预测的内容';
-                    break;
-                case 'custom':
-                    gridContentText.textContent = '这里是智能查询';
-                    break;
-                default:
-                    gridContentText.textContent = '点击选择内容';
-            }
-            document.getElementById('grid-content').classList.remove('hidden');
-        }
-        // 显示潜客挖掘报表列表
+        // 切换数据内容的函数
+        
         function showGridContent(contentId) {
             const gridItems = document.querySelectorAll('.grid-item');
             gridItems.forEach(item => {
@@ -1611,7 +1598,7 @@
             const marketingReports = document.getElementById('marketing-reports');
             switch (contentId) {
                 case 'realtime':
-                    gridContentText.textContent = '这里是实时业绩的内容';
+                    gridContentText.textContent = '统一口径模板化查询：个人及网格的业绩看板，根据家客任务，在此体现网格业绩完成率、累计量，个人贡献值。多维度设计报表';
                     marketingReports.classList.add('hidden');
                     break;
                 case 'marketing':
@@ -1619,11 +1606,11 @@
                     marketingReports.classList.remove('hidden');
                     break;
                 case 'trend':
-                    gridContentText.textContent = '这里是趋势预测的内容';
+                    gridContentText.textContent = '根据客户消费金额，产品内容，推荐可升级套餐。结合客户自主订购产品，交费习惯，活跃度等信息进行业务推荐。营销话术等等。';
                     marketingReports.classList.add('hidden');
                     break;
                 case 'custom':
-                    gridContentText.textContent = '这里是自定义的内容';
+                    gridContentText.textContent = '提供网格员自助拖拽条件，输出可交互数据透视表。';
                     marketingReports.classList.add('hidden');
                     break;
                 default:
