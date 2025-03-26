@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
     <title>模拟app demo</title>
     <style>
-        
-      
-        
         /* 全局样式 */
         body {
             margin: 0;
@@ -15,7 +13,12 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            background-color: #f5f5f5; /* 页面底色设置为浅灰 */
+            background-color: #f5f5f5;
+            /* 页面底色设置为浅灰 */
+            padding-bottom: max(env(safe-area-inset-bottom),
+                    48px
+                    /* 默认 Android 手势导航高度 */
+                );
         }
 
         /* 头部样式 - 所有页面共用 */
@@ -26,9 +29,11 @@
             padding: 10px;
             background-color: #f8f8f8;
         }
+
         .header .approval {
             position: relative;
         }
+
         .header .approval .badge {
             position: absolute;
             top: -5px;
@@ -43,6 +48,7 @@
             align-items: center;
             font-size: 12px;
         }
+
         .header .search {
             display: flex;
             align-items: center;
@@ -52,14 +58,18 @@
             background-color: white;
             cursor: pointer;
         }
+
         .header .search i {
             font-size: 20px;
             margin-right: 5px;
         }
+
         .header .search span {
-            color: #999; /* 灰色 */
+            color: #999;
+            /* 灰色 */
             font-size: 14px;
         }
+
         .header .settings {
             font-size: 24px;
             cursor: pointer;
@@ -69,9 +79,13 @@
         .content {
             flex: 1;
             overflow: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 2px;
-            position: relative; /* 使业务页面可以定位在其内部 */
-            padding-bottom: 50px; /* 添加底部内边距，避免被 menu 遮挡 */
+            position: relative;
+            /* 使业务页面可以定位在其内部 */
+            padding-bottom: 50px;
+            /* 添加底部内边距，避免被 menu 遮挡 */
         }
 
         /* 悬浮文本框样式 - 首页 */
@@ -80,9 +94,12 @@
             border-radius: 10px;
             padding: 10px;
             margin-bottom: 15px;
-            background-color: white; /* 悬浮文本框内部为白色 */
-            overflow: hidden; /* 隐藏超出部分 */
+            background-color: white;
+            /* 悬浮文本框内部为白色 */
+            overflow: hidden;
+            /* 隐藏超出部分 */
         }
+
         .floating-box img {
             max-width: 100%;
             height: auto;
@@ -95,6 +112,7 @@
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
         }
+
         .carousel-item {
             min-width: 100%;
             scroll-snap-align: start;
@@ -103,10 +121,12 @@
             align-items: center;
             padding: 10px;
         }
+
         .carousel-item img {
             max-width: 100%;
             height: auto;
         }
+
         #home .box-title span {
             font-size: 18px;
             color: #333;
@@ -118,31 +138,42 @@
         .stats-container {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* 行间距 */
+            gap: 10px;
+            /* 行间距 */
             padding: 10px;
         }
+
         .stats-row {
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* 列间距 */
+            gap: 10px;
+            /* 列间距 */
         }
+
         .stats-item {
-            flex: 1; /* 每个 stats-item 平均分配宽度 */
-            background-color: #f8f8f8; /* 浅灰色背景 */
+            flex: 1;
+            /* 每个 stats-item 平均分配宽度 */
+            background-color: #f8f8f8;
+            /* 浅灰色背景 */
             border-radius: 8px;
             padding: 10px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
         }
+
         .stats-label {
             font-size: 14px;
-            color: #666; /* 灰色文字 */
+            color: #666;
+            /* 灰色文字 */
             display: block;
             margin-bottom: 5px;
         }
+
         .stats-value {
             font-size: 16px;
-            color: #333; /* 深色文字 */
+            color: #333;
+            /* 深色文字 */
             font-weight: bold;
         }
 
@@ -150,29 +181,40 @@
         .menu {
             display: flex;
             justify-content: space-around;
-            padding: 5px 0; /* 调整上下内边距 */
+            padding: 5px 0;
+            /* 调整上下内边距 */
+            padding-bottom: env(safe-area-inset-bottom);
             background-color: #f8f8f8;
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 50px; /* 固定高度 */
+            height: 50px;
+            /* 固定高度 */
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .menu-item {
             text-align: center;
             cursor: pointer;
-            font-size: 12px; /* 调整文字大小 */
+            font-size: 12px;
+            /* 调整文字大小 */
         }
+
         .menu-item i {
-            font-size: 18px; /* 调整图标大小 */
+            font-size: 18px;
+            /* 调整图标大小 */
             display: block;
             margin-bottom: 2px;
         }
+
         .menu-item.active {
-            color: red; /* 激活状态的图标和文字为红色 */
+            color: red;
+            /* 激活状态的图标和文字为红色 */
         }
+
         .menu-item:not(.active) {
-            color: #999; /* 未激活状态的图标和文字为灰色 */
+            color: #999;
+            /* 未激活状态的图标和文字为灰色 */
         }
 
         /* 网格页面样式 - 数据页面 */
@@ -180,19 +222,26 @@
             display: flex;
             justify-content: space-around;
             padding: 10px;
-            border-bottom: 1px solid #ddd; /* 添加底部边框 */
+            border-bottom: 1px solid #ddd;
+            /* 添加底部边框 */
         }
+
         .grid-item {
             text-align: center;
             cursor: pointer;
             font-size: 16px;
-            color: #3b3939; /* 默认深灰色 */
+            color: #3b3939;
+            /* 默认深灰色 */
             position: relative;
-            padding: 10px 0; /* 调整上下内边距 */
+            padding: 10px 0;
+            /* 调整上下内边距 */
         }
+
         .grid-item.active {
-            color: red; /* 激活状态的文字为红色 */
+            color: red;
+            /* 激活状态的文字为红色 */
         }
+
         .grid-item.active::after {
             content: '';
             position: absolute;
@@ -200,7 +249,8 @@
             right: 0;
             bottom: 0;
             height: 2px;
-            background-color: red; /* 红色横线 */
+            background-color: red;
+            /* 红色横线 */
         }
 
         /* 隐藏样式 - 所有页面共用 */
@@ -210,74 +260,115 @@
 
         /* 页面图片样式 - OSS和工单页面 */
         .page img {
-            width: 100%; /* 图片宽度自适应 */
-            height: auto; /* 保持图片比例 */
+            width: 100%;
+            /* 图片宽度自适应 */
+            height: auto;
+            /* 保持图片比例 */
         }
 
         /* 业务页面样式 - 业务页面 */
         .business-container {
-            background-color: white; /* 白色背景 */
-            margin: 0; /* 上下左右外边距为0 */
-            padding: 0; /* 内边距为0 */
-            display: flex; /* 使用flex布局 */
-            height: 100%; /* 高度为content的100% */
-            position: absolute; /* 改为相对定位 */
-            width: 100%; /* 宽度为100% */
+            background-color: white;
+            /* 白色背景 */
+            margin: 0;
+            /* 上下左右外边距为0 */
+            padding: 0;
+            /* 内边距为0 */
+            display: flex;
+            /* 使用flex布局 */
+            height: 100%;
+            /* 高度为content的100% */
+            position: absolute;
+            /* 改为相对定位 */
+            width: 100%;
+            /* 宽度为100% */
         }
+
         .business-container .gray-box {
-            background-color: #ddd; /* 灰色背景 */
-            width: 60px; /* 宽度 */
-            height: 100%; /* 高度为整个页面 */
+            background-color: #ddd;
+            /* 灰色背景 */
+            width: 60px;
+            /* 宽度 */
+            height: 100%;
+            /* 高度为整个页面 */
             display: flex;
-            flex-direction: column; /* 子元素垂直排列 */
-            align-items: center; /* 水平居中 */
-            justify-content: flex-start; /* 从顶部开始排列 */
-            padding-top: 10px; /* 顶部内边距 */
+            flex-direction: column;
+            /* 子元素垂直排列 */
+            align-items: center;
+            /* 水平居中 */
+            justify-content: flex-start;
+            /* 从顶部开始排列 */
+            padding-top: 10px;
+            /* 顶部内边距 */
         }
+
         .business-container .gray-box .square-box {
-            width: 60px; /* 正方形宽度 */
-            height: 60px; /* 正方形高度 */
-            margin-bottom: 10px; /* 下边距 */
+            width: 60px;
+            /* 正方形宽度 */
+            height: 60px;
+            /* 正方形高度 */
+            margin-bottom: 10px;
+            /* 下边距 */
             display: flex;
-            justify-content: center; /* 文字水平居中 */
-            align-items: center; /* 文字垂直居中 */
-            font-size: 14px; /* 文字大小 */
-            background-color: #ddd; /* 默认与gray-box颜色一致 */
-            cursor: pointer; /* 鼠标指针变为手型 */
+            justify-content: center;
+            /* 文字水平居中 */
+            align-items: center;
+            /* 文字垂直居中 */
+            font-size: 14px;
+            /* 文字大小 */
+            background-color: #ddd;
+            /* 默认与gray-box颜色一致 */
+            cursor: pointer;
+            /* 鼠标指针变为手型 */
         }
+
         .business-container .gray-box .square-box.active {
-            background-color: white; /* 点击时变为白色 */
+            background-color: white;
+            /* 点击时变为白色 */
         }
 
         /* 右侧白色文本框样式 - 业务页面 */
         .right-content {
-            flex: 1; /* 占据剩余空间 */
-            background-color: white; /* 白色背景 */
+            flex: 1;
+            /* 占据剩余空间 */
+            background-color: white;
+            /* 白色背景 */
             padding: 10px;
-            display: none; /* 默认隐藏 */
+            display: none;
+            /* 默认隐藏 */
         }
+
         .right-content.active {
-            display: block; /* 显示 */
+            display: block;
+            /* 显示 */
         }
 
         /* 9宫格样式 - 业务页面 */
         .grid-9 {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3列 */
-            gap: 10px; /* 间距 */
+            grid-template-columns: repeat(3, 1fr);
+            /* 3列 */
+            gap: 10px;
+            /* 间距 */
         }
+
         .grid-9 .grid-item {
             text-align: center;
             cursor: pointer;
         }
+
         .grid-9 .grid-item i {
-            font-size: 24px; /* 图标大小 */
+            font-size: 24px;
+            /* 图标大小 */
             display: block;
             margin-bottom: 5px;
         }
+
         .grid-9 .grid-item span {
-            font-size: 12px; /* 文字大小 */
-            color: #333; /* 文字颜色 */
+            font-size: 12px;
+            /* 文字大小 */
+            color: #333;
+            /* 文字颜色 */
         }
 
         /* 分页指示器样式 - 首页 */
@@ -286,6 +377,7 @@
             justify-content: center;
             margin-top: 10px;
         }
+
         .carousel-indicators .indicator {
             width: 6px;
             height: 6px;
@@ -293,10 +385,13 @@
             border-radius: 50%;
             margin: 0 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease, border 0.3s ease; /* 添加过渡效果 */
+            transition: background-color 0.3s ease, border 0.3s ease;
+            /* 添加过渡效果 */
         }
+
         .carousel-indicators .indicator.active {
-            background-color: transparent; /* 空心 */
+            background-color: transparent;
+            /* 空心 */
             border: 1px solid #080808;
         }
 
@@ -304,31 +399,43 @@
         .audit-container {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* 上下文本框之间的间距 */
+            gap: 10px;
+            /* 上下文本框之间的间距 */
             padding: 10px;
         }
+
         .audit-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #f8f8f8; /* 浅灰色背景 */
+            background-color: #f8f8f8;
+            /* 浅灰色背景 */
             border-radius: 8px;
             padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
         }
+
         .audit-text {
-            flex: 1; /* 占据剩余空间 */
+            flex: 1;
+            /* 占据剩余空间 */
             font-size: 14px;
             color: #333;
         }
+
         .audit-text p {
-            margin: 5px 0; /* 每行文字的间距 */
+            margin: 5px 0;
+            /* 每行文字的间距 */
         }
+
         .audit-buttons {
             display: flex;
-            flex-direction: column; /* 按钮竖排排列 */
-            gap: 10px; /* 按钮之间的间距 */
+            flex-direction: column;
+            /* 按钮竖排排列 */
+            gap: 10px;
+            /* 按钮之间的间距 */
         }
+
         .audit-button {
             padding: 8px 16px;
             border: none;
@@ -337,308 +444,332 @@
             font-size: 14px;
             transition: background-color 0.3s ease;
         }
+
         .audit-button.approve {
-            background-color: #4caf50; /* 绿色 */
+            background-color: #4caf50;
+            /* 绿色 */
             color: white;
         }
+
         .audit-button.cancel {
-            background-color: #f44336; /* 红色 */
+            background-color: #f44336;
+            /* 红色 */
             color: white;
         }
+
         .audit-button:hover {
-            opacity: 0.9; /* 鼠标悬停时按钮透明度变化 */
+            opacity: 0.9;
+            /* 鼠标悬停时按钮透明度变化 */
         }
 
         /* 全屏弹出页面样式 - 智慧小助手 */
-.overlay {
-    display: none;
-    position: fixed;
-    top: 90%; /* 初始位置在屏幕底部 90% 处 */
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    z-index: 1000;
-    transition: top 0.3s ease; /* 添加滑动动画 */
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
-}
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 90%;
+            /* 初始位置在屏幕底部 90% 处 */
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            transition: top 0.3s ease;
+            /* 添加滑动动画 */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            /* 添加阴影效果 */
+        }
 
-.overlay.open {
-    top: 0; /* 完全展开时，顶部对齐屏幕顶部 */
-}
+        .overlay.open {
+            top: 0;
+            /* 完全展开时，顶部对齐屏幕顶部 */
+        }
 
-/* 新增蓝色头部 */
-.overlay .blue-header {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    padding: 20px;
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    position: relative;
-}
+        /* 新增蓝色头部 */
+        .overlay .blue-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            position: relative;
+        }
 
-.overlay .blue-header::before {
-    content: 'AI';
-    position: absolute;
-    top: 50%;
-    left: 70%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5em;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.1);
-    z-index: 1;
-}
+        .overlay .blue-header::before {
+            content: 'AI';
+            position: absolute;
+            top: 50%;
+            left: 70%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
 
-.overlay .blue-header::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 70%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    z-index: 0;
-}
+        .overlay .blue-header::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 70%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
 
-.overlay .blue-header .subtitle {
-    font-size: 0.6em;
-    color: rgba(255, 255, 255, 0.8);
-    margin-top: 5px;
-    font-weight: normal;
-}
+        .overlay .blue-header .subtitle {
+            font-size: 0.6em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+            font-weight: normal;
+        }
 
-.overlay .back-button {
-    position: absolute;
-    top: 20px;
-    left: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
-}
+        .overlay .back-button {
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+        }
 
-.overlay .close-zhbutton {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 30px;
-    cursor: pointer;
-    color: white;
-    z-index: 1001;
-}
+        .overlay .close-zhbutton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: white;
+            z-index: 1001;
+        }
 
-/* 聊天窗口样式 */
-.overlay .chat-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 60px; /* 给头部留出空间 */
-}
+        /* 聊天窗口样式 */
+        .overlay .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 60px;
+            /* 给头部留出空间 */
+        }
 
-/* 消息气泡样式 */
-.overlay .message {
-    max-width: 70%;
-    padding: 10px;
-    border-radius: 6px;
-    position: relative;
-    font-size: 14px;
-    line-height: 1.4;
-}
+        /* 消息气泡样式 */
+        .overlay .message {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 6px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-/* 用户消息气泡 */
-.overlay .message.user {
-    align-self: flex-end;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    margin-left: 30%; /* 用户消息靠右 */
-}
+        /* 用户消息气泡 */
+        .overlay .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin-left: 30%;
+            /* 用户消息靠右 */
+        }
 
-/* 用户消息气泡小箭头 */
-.overlay .message.user::after {
-    content: '';
-    position: absolute;
-    right: -10px;
-    top: 10px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 10px 0 10px 10px;
-    border-color: transparent transparent transparent #1e3c72;
-}
+        /* 用户消息气泡小箭头 */
+        .overlay .message.user::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 10px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 10px;
+            border-color: transparent transparent transparent #1e3c72;
+        }
 
-/* 助手消息气泡 */
-.overlay .message.assistant {
-    align-self: flex-start;
-    background-color: #e0e0e0;
-    color: #333;
-    margin-right: 30%; /* 助手消息靠左 */
-}
+        /* 助手消息气泡 */
+        .overlay .message.assistant {
+            align-self: flex-start;
+            background-color: #e0e0e0;
+            color: #333;
+            margin-right: 30%;
+            /* 助手消息靠左 */
+        }
 
-/* 助手消息气泡小箭头 */
-.overlay .message.assistant::after {
-    content: '';
-    position: absolute;
-    left: -10px;
-    top: 10px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 10px 10px 10px 0;
-    border-color: transparent #e0e0e0 transparent transparent;
-}
+        /* 助手消息气泡小箭头 */
+        .overlay .message.assistant::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 10px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent #e0e0e0 transparent transparent;
+        }
 
-/* 时间戳样式 */
-.overlay .message .timestamp {
-    font-size: 12px;
-    color: #999;
-    margin-top: 5px;
-    display: block;
-    text-align: right;
-}
+        /* 时间戳样式 */
+        .overlay .message .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
 
-/* 输入框区域样式 */
-.overlay .question-box {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 15px;
-    background-color: #f8f8f8;
-}
+        /* 输入框区域样式 */
+        .overlay .question-box {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            background-color: #f8f8f8;
+        }
 
-.overlay .question-box input {
-    flex: 1;
-    border: none;
-    background-color: transparent;
-    padding: 5px;
-    font-size: 16px;
-}
+        .overlay .question-box input {
+            flex: 1;
+            border: none;
+            background-color: transparent;
+            padding: 5px;
+            font-size: 16px;
+        }
 
-.overlay .question-box input::placeholder {
-    color: #999;
-}
+        .overlay .question-box input::placeholder {
+            color: #999;
+        }
 
-/* 发送按钮样式  */
-.overlay .question-box button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: opacity 0.3s ease;
-}
+        /* 发送按钮样式  */
+        .overlay .question-box button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
 
-.overlay .question-box button:hover {
-    opacity: 0.9;
-}
+        .overlay .question-box button:hover {
+            opacity: 0.9;
+        }
 
 
-                 /* 新增样式 - 潜客挖掘报表页面 */
-                .report-overlay {
-                    display: none;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: white;
-                    z-index: 1000;
-                    padding: 20px;
-                    box-sizing: border-box;
-                }
+        /* 新增样式 - 潜客挖掘报表页面 */
+        .report-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-                .report-overlay.open {
-                    display: block;
-                }
+        .report-overlay.open {
+            display: block;
+        }
 
-                .report-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 20px;
-                }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-                .report-header h2 {
-                    margin: 0;
-                    font-size: 20px;
-                    color: #333;
-                }
+        .report-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
 
-                .report-header .close-button {
-                    font-size: 18px;
-                    cursor: pointer;
-                    color: #333;
-                }
+        .report-header .close-button {
+            font-size: 18px;
+            cursor: pointer;
+            color: #333;
+        }
 
-                .report-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-                .report-table th,
-                .report-table td {
-                    border: 1px solid #ddd;
-                    padding: 12px;
-                    text-align: center;
-                }
+        .report-table th,
+        .report-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
 
-                .report-table th {
-                    background-color: #f8f8f8;
-                    font-weight: bold;
-                    color: #333;
-                }
+        .report-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
 
-                .report-table td {
-                    background-color: white;
-                    color: #555;
-                }
+        .report-table td {
+            background-color: white;
+            color: #555;
+        }
 
-                .report-table tr:hover {
-                    background-color: #f1f1f1;
-                }
-               /* 报表名称样式 */
+        .report-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 报表名称样式 */
         .report-list {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 两列布局 */
-            gap: 15px; /* 报表之间的间距 */
+            grid-template-columns: repeat(2, 1fr);
+            /* 两列布局 */
+            gap: 15px;
+            /* 报表之间的间距 */
             padding: 20px;
-            position: relative; /* 为圆环定位 */
+            position: relative;
+            /* 为圆环定位 */
         }
 
         /* 圆环样式 */
         .report-ring {
             position: absolute;
-            top: 20px; /* 圆环位于报表名称上方 */
+            top: 20px;
+            /* 圆环位于报表名称上方 */
             left: 50%;
             transform: translateX(-50%);
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: conic-gradient(
-                #4caf50 0% 30%, /* 绿色部分 */
-                #f35a4a 30% 45%, /* 2部分 */
-                #ffeb3b 45% 65%, /* 黄色部分 */
-                #007bff 65% 70%, /* 橙色部分 */
-                #36f482 70% 80%, /* 红色部分 */
-                #fb1515 80% 100% /* 6部分 */
+            background: conic-gradient(#4caf50 0% 30%,
+                    /* 绿色部分 */
+                    #f35a4a 30% 45%,
+                    /* 2部分 */
+                    #ffeb3b 45% 65%,
+                    /* 黄色部分 */
+                    #007bff 65% 70%,
+                    /* 橙色部分 */
+                    #36f482 70% 80%,
+                    /* 红色部分 */
+                    #fb1515 80% 100%
+                    /* 6部分 */
 
-            );
+                );
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
         }
 
         .report-ring::before {
@@ -647,154 +778,199 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: white; /* 中间白色背景 */
+            background: white;
+            /* 中间白色背景 */
         }
 
         .report-ring span {
             position: relative;
             font-size: 18px;
             font-weight: bold;
-            color: #333; /* 事件总数文字颜色 */
+            color: #333;
+            /* 事件总数文字颜色 */
             z-index: 1;
         }
 
         /* 报表名称样式 */
         .report-item {
             position: relative;
-            top: 160%; /* 将 report-item 放置在 report-ring 的下方 */
-            background-color: #ffffff; /* 白色背景 */
-            border: 1px solid #e0e0e0; /* 浅灰色边框 */
-            border-radius: 10px; /* 圆角 */
+            top: 160%;
+            /* 将 report-item 放置在 report-ring 的下方 */
+            background-color: #ffffff;
+            /* 白色背景 */
+            border: 1px solid #e0e0e0;
+            /* 浅灰色边框 */
+            border-radius: 10px;
+            /* 圆角 */
             padding: 20px;
             text-align: center;
             font-size: 16px;
             font-weight: 500;
-            color: #333; /* 深灰色文字 */
+            color: #333;
+            /* 深灰色文字 */
             cursor: pointer;
-            transition: all 0.3s ease; /* 平滑过渡效果 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            transition: all 0.3s ease;
+            /* 平滑过渡效果 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
         }
 
         .report-item .value {
             font-size: 14px;
-            color: #666; /* 小字数值颜色 */
+            color: #666;
+            /* 小字数值颜色 */
             margin-top: 5px;
             display: block;
         }
 
         .report-item:hover {
-            background-color: #f8f8f8; /* 鼠标悬停时背景色变浅 */
-            border-color: #007bff; /* 鼠标悬停时边框变蓝色 */
-            transform: translateY(-5px); /* 鼠标悬停时上移 */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 悬停时阴影加深 */
+            background-color: #f8f8f8;
+            /* 鼠标悬停时背景色变浅 */
+            border-color: #007bff;
+            /* 鼠标悬停时边框变蓝色 */
+            transform: translateY(-5px);
+            /* 鼠标悬停时上移 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            /* 悬停时阴影加深 */
         }
 
         .report-item:active {
-            transform: translateY(0); /* 点击时恢复原位 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 点击时阴影恢复 */
+            transform: translateY(0);
+            /* 点击时恢复原位 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 点击时阴影恢复 */
         }
 
 
         /*模拟OSS页面样式*/
-                
-        .oss-container {
-    width: 100%;
-    max-width: 100%;
-    padding: 5px;
-    position: fixed;
-    /* 添加以下属性确保在手机上表现良好 */
-    box-sizing: border-box; /* 确保padding不会增加元素的总宽度 */
-    left: 0; /* 固定定位时确保从左侧开始 */
-    right: 0; /* 固定定位时确保延伸到右侧 */
-}
-        
+
+
+
+        /* 滚动到顶部/底部时调整轨道边距 */
+        .oss-container::-webkit-scrollbar-track:vertical:start {
+            margin-top: 4px;
+        }
+
+        .oss-container::-webkit-scrollbar-track:vertical:end {
+            margin-bottom: 4px;
+        }
+
+        .oss-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--thumb-hover-start), var(--thumb-hover-end));
+            transform: scaleX(1.15);
+        }
+
+        /* 滚动时激活状态 */
+        .oss-container:not(:hover)::-webkit-scrollbar-thumb {
+            opacity: 0.9;
+            background: linear-gradient(45deg,
+                    color-mix(in srgb, var(--thumb-start) 80%, transparent),
+                    color-mix(in srgb, var(--thumb-end) 80%, transparent));
+        }
+
         .oss-h1 {
             text-align: center;
             margin-bottom: 15px;
             color: #2c3e50;
             font-size: 1rem;
             font-weight: 600;
-            display: flex;           /* 使用弹性布局使元素水平排列 */
-            justify-content: space-between;  /* 在元素之间创建均匀的空格 */
-            max-width: 300px;       /* 根据需要调整宽度 */
-            margin: 0 auto;         /* 居中显示 */
+            display: flex;
+            /* 使用弹性布局使元素水平排列 */
+            justify-content: space-between;
+            /* 在元素之间创建均匀的空格 */
+            max-width: 300px;
+            /* 根据需要调整宽度 */
+            margin: 0 auto;
+            /* 居中显示 */
             padding: 10px;
         }
+
         .oss-h1 span {
-  margin: 0 10px;         /* 左右边距增加间距 */
-}
-.underline {
-  position: relative;     /* 为伪元素定位做准备 */
-}
+            margin: 0 10px;
+            /* 左右边距增加间距 */
+        }
 
-.underline::after {
-  content: "";            /* 必须有的伪元素内容 */
-  position: absolute;     /* 绝对定位 */
-  left: 0;                /* 从左边开始 */
-  bottom: -5px;           /* 在文字下方 */
-  width: 100%;            /* 与文字同宽 */
-  height: 2px;            /* 线的高度 */
-  background-color: red;  /* 红色横线 */
-}
+        .underline {
+            position: relative;
+            /* 为伪元素定位做准备 */
+        }
+
+        .underline::after {
+            content: "";
+            /* 必须有的伪元素内容 */
+            position: absolute;
+            /* 绝对定位 */
+            left: 0;
+            /* 从左边开始 */
+            bottom: -5px;
+            /* 在文字下方 */
+            width: 100%;
+            /* 与文字同宽 */
+            height: 2px;
+            /* 线的高度 */
+            background-color: red;
+            /* 红色横线 */
+        }
 
 
-        
+
         .oss-ip-input-container {
             background-color: white;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             border: 1px solid #e0e0e0;
-            
+
         }
-        
+
         .oss-ip-input-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        
+
         .oss-ip-input-label {
             font-weight: 600;
             font-size: 1rem;
             color: #444;
         }
-        
+
         .oss-ip-input-fields {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
         }
-        
+
         .oss-ip-input {
             width: 22%;
             max-width: 80px;
-            height: 30px;
+            height: 22px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1rem;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
             margin: 0 3px;
             font-weight: 500;
             transition: border-color 0.3s;
         }
-        
+
         .oss-ip-input:focus {
-            border-color: #ff6b00;
+            border-color: #ff3c00;
             outline: none;
         }
-        
+
         .oss-ip-dot {
             font-size: 1.2rem;
             color: #777;
             margin: 0 2px;
         }
-        
+
         .oss-query-btn {
             padding: 8px 15px;
-            background-color: #ff6b00;
+            border-color: #ff3c00;
+            background-color: #ff3C00;
             color: white;
             border: none;
             border-radius: 6px;
@@ -804,12 +980,12 @@
             transition: all 0.3s;
             white-space: nowrap;
         }
-        
+
         .oss-query-btn:active {
-            background-color: #e65c00;
+            background-color: #ff3c00;
             transform: scale(0.98);
         }
-        
+
         .oss-result-item {
             margin-bottom: 12px;
             padding-bottom: 12px;
@@ -817,20 +993,20 @@
             display: flex;
             flex-wrap: wrap;
         }
-        
+
         .oss-result-item:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
-        
+
         .oss-result-label {
             font-weight: 600;
             color: #555;
             width: 80px;
             font-size: 0.9rem;
         }
-        
+
         .oss-result-value {
             color: #333;
             flex: 1;
@@ -838,21 +1014,21 @@
             word-break: break-all;
             font-size: 0.9rem;
         }
-        
+
         .oss-user-count-link {
-            color: #ff6b00;
+            color: #ff3C00;
             text-decoration: none;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             font-size: 0.9rem;
         }
-        
+
         .oss-user-count-link::after {
             content: "→";
             margin-left: 5px;
         }
-        
+
         .oss-user-table-container {
             margin-top: 15px;
             display: none;
@@ -866,16 +1042,16 @@
             background-color: white;
             position: relative;
         }
-        
+
         .oss-user-table {
             width: 100%;
             min-width: 300px;
             border-collapse: separate;
             border-spacing: 0;
         }
-        
+
         .oss-user-table th {
-            background-color: #ff6b00;
+            background-color: #ff3C00;
             color: white;
             padding: 10px 8px;
             text-align: left;
@@ -886,18 +1062,18 @@
             top: 0;
             z-index: 10;
         }
-        
+
         .oss-user-table td {
             padding: 10px 8px;
             border-bottom: 1px solid #f0f0f0;
             font-size: 1rem;
             background-color: white;
         }
-        
+
         .oss-user-table tr:last-child td {
             border-bottom: none;
         }
-        
+
         .oss-user-info {
             display: none;
             background-color: #f9f9f9;
@@ -905,21 +1081,21 @@
             border-radius: 4px;
             margin-top: 5px;
             font-size: 1rem;
-            border-left: 2px solid #ff6b00;
+            border-left: 2px solid #ff3C00;
             white-space: normal;
         }
-        
+
         .oss-user-info div {
             margin-bottom: 4px;
         }
-        
+
         .oss-user-info strong {
             color: #555;
             min-width: 35px;
             display: inline-block;
             font-size: 0.85rem;
         }
-        
+
         .oss-loading {
             text-align: center;
             padding: 10px;
@@ -927,19 +1103,19 @@
             color: #777;
             font-size: 0.9rem;
         }
-        
+
         .oss-loader {
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(255,107,0,0.3);
+            border: 2px solid rgba(255, 107, 0, 0.3);
             border-radius: 50%;
-            border-top-color: #ff6b00;
+            border-top-color: #ff3C00;
             animation: oss-spin 1s ease-in-out infinite;
             margin-right: 8px;
             vertical-align: middle;
         }
-        
+
         .oss-no-more-data {
             text-align: center;
             padding: 10px;
@@ -947,241 +1123,245 @@
             font-size: 0.9rem;
             display: none;
         }
-        
+
         @keyframes oss-spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-
-
     </style>
 </head>
+
 <body>
-<div class="header">
-    <div class="approval" id="approval">
-        待审核
-        <div class="badge">5</div> <!-- 审核数量徽章 -->
-    </div>
-    <div class="search">
-        <i>🤖</i> <!-- 智慧小助手图标 -->
-        <span>智慧小助手 🔍</span>
-    </div>
-    <!-- 智慧小助手全屏弹出页面 -->
-<div class="overlay" id="overlay">
-    <!-- 新增蓝色头部 -->
-    <div class="blue-header">
-        <div class="back-button">&#9776;</div>
-        <div class="close-zhbutton">&times;</div>
-        <div>
-            🤖智慧小助手
-            <div class="subtitle">Hi，您好，BOSS操作，宽带维修…我都能帮您。</div>
+    <div class="header">
+        <div class="approval" id="approval">
+            待审核
+            <div class="badge">5</div> <!-- 审核数量徽章 -->
         </div>
-    </div>
-    <div class="chat-container" id="chat-container">
-        <!-- 聊天内容将动态插入到这里 -->
-    </div>
-    <div class="question-box">
-        <input type="text" id="question-input" placeholder="有问题，尽管问我！">
-        <button onclick="sendMessage()">发送</button>
-    </div>
-</div>
-
-
-
-    <div class="settings">⚙️</div> <!-- 设置图标 -->
-</div>
-<div class="content">
-    <div id="home" class="page">
-
-        <div class="box-title">
-            <i>📈</i> <!-- 图标 -->
-            <span>实时数据简报</span> <!-- 文字 -->
+        <div class="search">
+            <i>🤖</i> <!-- 智慧小助手图标 -->
+            <span>智慧小助手 🔍</span>
         </div>
-        <div class="floating-box">
-            <div class="carousel">
-                <div class="carousel-item">
-                    <div class="stats-container">
-                        <div class="stats-row">
-                            <div class="stats-item">
-                                <span class="stats-label">本人新增</span>
-                                <span class="stats-value">6户</span>
+        <!-- 智慧小助手全屏弹出页面 -->
+        <div class="overlay" id="overlay">
+            <!-- 新增蓝色头部 -->
+            <div class="blue-header">
+                <div class="back-button">&#9776;</div>
+                <div class="close-zhbutton">&times;</div>
+                <div>
+                    🤖智慧小助手
+                    <div class="subtitle">Hi，您好，BOSS操作，宽带维修…我都能帮您。</div>
+                </div>
+            </div>
+            <div class="chat-container" id="chat-container">
+                <!-- 聊天内容将动态插入到这里 -->
+            </div>
+            <div class="question-box">
+                <input type="text" id="question-input" placeholder="有问题，尽管问我！">
+                <button onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+
+
+
+        <div class="settings">⚙️</div> <!-- 设置图标 -->
+    </div>
+    <div class="content">
+        <div id="home" class="page">
+
+            <div class="box-title">
+                <i>📈</i> <!-- 图标 -->
+                <span>实时数据简报</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <div class="carousel">
+                    <div class="carousel-item">
+                        <div class="stats-container">
+                            <div class="stats-row">
+                                <div class="stats-item">
+                                    <span class="stats-label">本人新增</span>
+                                    <span class="stats-value">6户</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">网格新增</span>
+                                    <span class="stats-value">10户</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">本月累计</span>
+                                    <span class="stats-value">100户</span>
+                                </div>
                             </div>
-                            <div class="stats-item">
-                                <span class="stats-label">网格新增</span>
-                                <span class="stats-value">10户</span>
-                            </div>
-                            <div class="stats-item">
-                                <span class="stats-label">本月累计</span>
-                                <span class="stats-value">100户</span>
+                            <div class="stats-row">
+                                <div class="stats-item">
+                                    <span class="stats-label">本人收入</span>
+                                    <span class="stats-value">10元</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">网格收入</span>
+                                    <span class="stats-value">200元</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">累计收入</span>
+                                    <span class="stats-value">300元</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="stats-row">
-                            <div class="stats-item">
-                                <span class="stats-label">本人收入</span>
-                                <span class="stats-value">10元</span>
+                    </div>
+                    <div class="carousel-item">
+                        <p>这是首页的悬浮文本框1 - 第二页-5G情况</p>
+                    </div>
+                    <div class="carousel-item">
+                        <p>这是首页的悬浮文本框1 - 第三页-OSS</p>
+                    </div>
+                    <div class="carousel-item">
+                        <p>这是首页的悬浮文本框1 - 第四页</p>
+                    </div>
+                </div>
+                <div class="carousel-indicators">
+                    <div class="indicator active" onclick="goToPage(0)"></div>
+                    <div class="indicator" onclick="goToPage(1)"></div>
+                    <div class="indicator" onclick="goToPage(2)"></div>
+                    <div class="indicator" onclick="goToPage(3)"></div>
+                </div>
+            </div>
+
+            <div class="box-title">
+                <i>📝</i> <!-- 图标 -->
+                <span>工单任务</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <p>故障工单 0 业务受理工单 0 营销工单 0</p>
+            </div>
+
+            <div class="box-title">
+                <i>📌</i> <!-- 图标 -->
+                <span>常用菜单</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <p>📩 🏢 📝</p>
+            </div>
+        </div>
+        <div id="business" class="page hidden">
+            <!-- 业务页面的新增内容 -->
+            <div class="business-container">
+                <div class="gray-box">
+                    <div class="square-box" onclick="toggleSquareBox(this, '固网')">固网</div> <!-- 第一个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '移网个人')">移网<br>个人</div>
+                    <!-- 第二个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '移网集团')">移网<br>集团</div>
+                    <!-- 第三个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '审核')">审核</div> <!-- 第四个正方形文本框 -->
+                </div>
+                <!-- 右侧内容区域 -->
+                <div id="right-content-固网" class="right-content">
+                    <div class="grid-9">
+                        <div class="grid-item"><i>📁</i><span>固功1</span></div>
+                        <div class="grid-item"><i>📊</i><span>固功2</span></div>
+                        <div class="grid-item"><i>📅</i><span>固功3</span></div>
+                        <div class="grid-item"><i>📝</i><span>固功4</span></div>
+                        <div class="grid-item"><i>📂</i><span>固功5</span></div>
+                        <div class="grid-item"><i>📈</i><span>固功6</span></div>
+                        <div class="grid-item"><i>📌</i><span>固功7</span></div>
+                        <div class="grid-item"><i>📎</i><span>固功8</span></div>
+                        <div class="grid-item"><i>✅</i><span>审核？</span></div>
+                    </div>
+                </div>
+                <div id="right-content-移网个人" class="right-content">
+                    <div class="grid-9">
+                        <div class="grid-item"><i>📱</i><span>移功1</span></div>
+                        <div class="grid-item"><i>📶</i><span>移功2</span></div>
+                        <div class="grid-item"><i>📞</i><span>移功3</span></div>
+                        <div class="grid-item"><i>📩</i><span>移功4</span></div>
+                        <div class="grid-item"><i>📷</i><span>移功5</span></div>
+                        <div class="grid-item"><i>🎮</i><span>移功6</span></div>
+                        <div class="grid-item"><i>📅</i><span>移功7</span></div>
+                        <div class="grid-item"><i>📂</i><span>移功8</span></div>
+                        <div class="grid-item"><i>📊</i><span>移功9</span></div>
+                    </div>
+                </div>
+                <div id="right-content-移网集团" class="right-content">
+                    <div class="grid-9">
+                        <div class="grid-item"><i>🏢</i><span>集团激活成员</span></div>
+                        <div class="grid-item"><i>👥</i><span>集团功能2</span></div>
+                        <div class="grid-item"><i>📊</i><span>集团功能3</span></div>
+                        <div class="grid-item"><i>📅</i><span>集团功能4</span></div>
+                    </div>
+                </div>
+                <div id="right-content-审核" class="right-content">
+                    <div class="audit-container">
+                        <div class="audit-box">
+                            <div class="audit-text">
+                                <p>客户编码：100333333333</p>
+                                <p>审核项目：订购产品</p>
+                                <p>审核额度：15天</p>
+                                <p>提交人：张三</p>
                             </div>
-                            <div class="stats-item">
-                                <span class="stats-label">网格收入</span>
-                                <span class="stats-value">200元</span>
+                            <div class="audit-buttons">
+                                <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
+                                <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
                             </div>
-                            <div class="stats-item">
-                                <span class="stats-label">累计收入</span>
-                                <span class="stats-value">300元</span>
+                        </div>
+                        <div class="audit-box">
+                            <div class="audit-text">
+                                <p>客户编码：102222222222</p>
+                                <p>审核项目：特殊退费</p>
+                                <p>审核额度：500元</p>
+                                <p>提交人：李四</p>
+                            </div>
+                            <div class="audit-buttons">
+                                <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
+                                <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <p>这是首页的悬浮文本框1 - 第二页-5G情况</p>
-                </div>
-                <div class="carousel-item">
-                    <p>这是首页的悬浮文本框1 - 第三页-OSS</p>
-                </div>
-                <div class="carousel-item">
-                    <p>这是首页的悬浮文本框1 - 第四页</p>
-                </div>
-            </div>
-            <div class="carousel-indicators">
-                <div class="indicator active" onclick="goToPage(0)"></div>
-                <div class="indicator" onclick="goToPage(1)"></div>
-                <div class="indicator" onclick="goToPage(2)"></div>
-                <div class="indicator" onclick="goToPage(3)"></div>
             </div>
         </div>
-
-        <div class="box-title">
-            <i>📝</i> <!-- 图标 -->
-            <span>工单任务</span> <!-- 文字 -->
-        </div>
-        <div class="floating-box">
-            <p>故障工单 0 业务受理工单 0 营销工单 0</p>
-        </div>
-
-        <div class="box-title">
-            <i>📌</i> <!-- 图标 -->
-            <span>常用菜单</span> <!-- 文字 -->
-        </div>
-        <div class="floating-box">
-            <p>📩 🏢 📝</p>
-        </div>
-    </div>
-    <div id="business" class="page hidden">
-        <!-- 业务页面的新增内容 -->
-        <div class="business-container">
-            <div class="gray-box">
-                <div class="square-box" onclick="toggleSquareBox(this, '固网')">固网</div> <!-- 第一个正方形文本框 -->
-                <div class="square-box" onclick="toggleSquareBox(this, '移网个人')">移网<br>个人</div>
-                <!-- 第二个正方形文本框 -->
-                <div class="square-box" onclick="toggleSquareBox(this, '移网集团')">移网<br>集团</div>
-                <!-- 第三个正方形文本框 -->
-                <div class="square-box" onclick="toggleSquareBox(this, '审核')">审核</div> <!-- 第四个正方形文本框 -->
-            </div>
-            <!-- 右侧内容区域 -->
-            <div id="right-content-固网" class="right-content">
-                <div class="grid-9">
-                    <div class="grid-item"><i>📁</i><span>固功1</span></div>
-                    <div class="grid-item"><i>📊</i><span>固功2</span></div>
-                    <div class="grid-item"><i>📅</i><span>固功3</span></div>
-                    <div class="grid-item"><i>📝</i><span>固功4</span></div>
-                    <div class="grid-item"><i>📂</i><span>固功5</span></div>
-                    <div class="grid-item"><i>📈</i><span>固功6</span></div>
-                    <div class="grid-item"><i>📌</i><span>固功7</span></div>
-                    <div class="grid-item"><i>📎</i><span>固功8</span></div>
-                    <div class="grid-item"><i>✅</i><span>审核？</span></div>
-                </div>
-            </div>
-            <div id="right-content-移网个人" class="right-content">
-                <div class="grid-9">
-                    <div class="grid-item"><i>📱</i><span>移功1</span></div>
-                    <div class="grid-item"><i>📶</i><span>移功2</span></div>
-                    <div class="grid-item"><i>📞</i><span>移功3</span></div>
-                    <div class="grid-item"><i>📩</i><span>移功4</span></div>
-                    <div class="grid-item"><i>📷</i><span>移功5</span></div>
-                    <div class="grid-item"><i>🎮</i><span>移功6</span></div>
-                    <div class="grid-item"><i>📅</i><span>移功7</span></div>
-                    <div class="grid-item"><i>📂</i><span>移功8</span></div>
-                    <div class="grid-item"><i>📊</i><span>移功9</span></div>
-                </div>
-            </div>
-            <div id="right-content-移网集团" class="right-content">
-                <div class="grid-9">
-                    <div class="grid-item"><i>🏢</i><span>集团激活成员</span></div>
-                    <div class="grid-item"><i>👥</i><span>集团功能2</span></div>
-                    <div class="grid-item"><i>📊</i><span>集团功能3</span></div>
-                    <div class="grid-item"><i>📅</i><span>集团功能4</span></div>
-                </div>
-            </div>
-            <div id="right-content-审核" class="right-content">
-                <div class="audit-container">
-                    <div class="audit-box">
-                        <div class="audit-text">
-                            <p>客户编码：100333333333</p>
-                            <p>审核项目：订购产品</p>
-                            <p>审核额度：15天</p>
-                            <p>提交人：张三</p>
-                        </div>
-                        <div class="audit-buttons">
-                            <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
-                            <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
-                        </div>
-                    </div>
-                    <div class="audit-box">
-                        <div class="audit-text">
-                            <p>客户编码：102222222222</p>
-                            <p>审核项目：特殊退费</p>
-                            <p>审核额度：500元</p>
-                            <p>提交人：李四</p>
-                        </div>
-                        <div class="audit-buttons">
-                            <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
-                            <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="oss" class="page hidden">
-        
+        <div id="oss" class="page hidden">
+            <h1 class="oss-h1"><span>局端新增</span><span>局端更换</span>
+                <span class="underline">局端信息查询</span>
+            </h1>
             <div class="oss-container">
-                <h1 class="oss-h1"><span>局端新增</span><span>局端更换</span>
-                    <span class="underline">局端信息查询</span></h1>
-                
-                    <div class="oss-ip-input-container">
-                        
-                        <div class="oss-ip-input-header">
-                            <span class="oss-ip-input-label">请输入IP地址：</span>
-                            <button class="oss-query-btn" id="ossQueryBtn">查询</button>
+
+
+
+                <div class="oss-ip-input-container">
+
+                    <div class="oss-ip-input-header">
+                        <span class="oss-ip-input-label">请输入IP地址：</span>
+                        <button class="oss-query-btn" id="ossQueryBtn">查询</button>
+                    </div>
+                    <div class="oss-ip-input-fields">
+                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                        <span class="oss-ip-dot">.</span>
+                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                        <span class="oss-ip-dot">.</span>
+                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                        <span class="oss-ip-dot">.</span>
+                        <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                    </div>
+
+                    <div id="ossBasicInfoContainer" style="display: none;">
+                        <div class="oss-result-item">
+                            <span class="oss-result-label">设备名称：</span>
+                            <span class="oss-result-value" id="ossDeviceName">-</span>
                         </div>
-                        <div class="oss-ip-input-fields">
-                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                            <span class="oss-ip-dot">.</span>
-                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                            <span class="oss-ip-dot">.</span>
-                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
-                            <span class="oss-ip-dot">.</span>
-                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder="0" inputmode="numeric">
+                        <div class="oss-result-item">
+                            <span class="oss-result-label">MAC地址：</span>
+                            <span class="oss-result-value" id="ossMacAddress">-</span>
                         </div>
-                        
-                        <div id="ossBasicInfoContainer" style="display: none;">
-                            <div class="oss-result-item">
-                                <span class="oss-result-label">设备名称：</span>
-                                <span class="oss-result-value" id="ossDeviceName">-</span>
-                            </div>
-                            <div class="oss-result-item">
-                                <span class="oss-result-label">MAC地址：</span>
-                                <span class="oss-result-value" id="ossMacAddress">-</span>
-                            </div>
-                            <div class="oss-result-item">
-                                <span class="oss-result-label">在线时长：</span>
-                                <span class="oss-result-value" id="ossOnlineTime">-</span>
-                            </div>
-                            <div class="oss-result-item">
-                                <span class="oss-result-label">在线用户：</span>
-                                <span class="oss-result-value">
-                                    <a href="javascript:void(0);" class="oss-user-count-link" id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
-                                </span>
-                            </div>
-                        mac
+                        <div class="oss-result-item">
+                            <span class="oss-result-label">在线时长：</span>
+                            <span class="oss-result-value" id="ossOnlineTime">-</span>
+                        </div>
+                        <div class="oss-result-item">
+                            <span class="oss-result-label">在线用户：</span>
+                            <span class="oss-result-value">
+                                <a href="javascript:void(0);" class="oss-user-count-link"
+                                    id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
+                            </span>
+                        </div>
+
                     </div>
                 </div>
                 <div class="oss-user-table-container" id="ossUserTableContainer">
@@ -1204,278 +1384,279 @@
                         已加载全部数据
                     </div>
                 </div>
-            </div>   
+            </div>
 
-        
-    </div>
-    <div id="workorder" class="page hidden">
-        <img src="workorder.jpg" alt="Work Order">
-    </div>
-    <div id="grid" class="page hidden">
-        <div class="grid-container">
-            <div class="grid-item active" onclick="showGridContent('realtime')">业绩追踪</div>
-            <div class="grid-item" onclick="showGridContent('marketing')">潜客挖掘</div>
-            <div class="grid-item" onclick="showGridContent('trend')">趋势预测</div>
-            <div class="grid-item" onclick="showGridContent('custom')">智能查询</div>
+
         </div>
-        <div id="grid-content" class="hidden">
-            <p id="grid-content-text">点击选择内容</p>
-            <!-- 新增潜客挖掘报表列表 -->
+        <div id="workorder" class="page hidden">
+            <p>不变呀不变！</p>
+        </div>
+        <div id="grid" class="page hidden">
+            <div class="grid-container">
+                <div class="grid-item active" onclick="showGridContent('realtime')">业绩追踪</div>
+                <div class="grid-item" onclick="showGridContent('marketing')">潜客挖掘</div>
+                <div class="grid-item" onclick="showGridContent('trend')">趋势预测</div>
+                <div class="grid-item" onclick="showGridContent('custom')">智能查询</div>
+            </div>
+            <div id="grid-content" class="hidden">
+                <p id="grid-content-text">点击选择内容</p>
+                <!-- 新增潜客挖掘报表列表 -->
 
-            <div id="marketing-reports" class="hidden">
-                <div class="report-list">
-                    <!-- 圆环 -->
-                    <div class="report-ring">
-                        <span>120</span> <!-- 事件总数 -->
-                    </div>
+                <div id="marketing-reports" class="hidden">
+                    <div class="report-list">
+                        <!-- 圆环 -->
+                        <div class="report-ring">
+                            <span>120</span> <!-- 事件总数 -->
+                        </div>
 
-                    <!-- 报表名称 -->
-                    <div class="report-item" onclick="showReport('report1')">
-                        数字临期明细
-                        <span class="value">30</span> <!-- 小字数值 -->
-                    </div>
-                    <div class="report-item" onclick="showReport('report2')">
-                        宽带临期明细
-                        <span class="value">15</span>
-                    </div>
-                    <div class="report-item" onclick="showReport('report3')">
-                        低余额用户明细
-                        <span class="value">20</span>
-                    </div>
-                    <div class="report-item" onclick="showReport('report4')">
-                        产品待升级明细
-                        <span class="value">5</span>
-                    </div>
-                    <div class="report-item" onclick="showReport('report5')">
-                        高活跃度明细
-                        <span class="value">10</span>
-                    </div>
-                    <div class="report-item" onclick="showReport('report6')">
-                        高价值用户明细
-                        <span class="value">20</span>
+                        <!-- 报表名称 -->
+                        <div class="report-item" onclick="showReport('report1')">
+                            数字临期明细
+                            <span class="value">30</span> <!-- 小字数值 -->
+                        </div>
+                        <div class="report-item" onclick="showReport('report2')">
+                            宽带临期明细
+                            <span class="value">15</span>
+                        </div>
+                        <div class="report-item" onclick="showReport('report3')">
+                            低余额用户明细
+                            <span class="value">20</span>
+                        </div>
+                        <div class="report-item" onclick="showReport('report4')">
+                            产品待升级明细
+                            <span class="value">5</span>
+                        </div>
+                        <div class="report-item" onclick="showReport('report5')">
+                            高活跃度明细
+                            <span class="value">10</span>
+                        </div>
+                        <div class="report-item" onclick="showReport('report6')">
+                            高价值用户明细
+                            <span class="value">20</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- 新增潜客挖掘报表弹出页面 -->
-    <div id="report-overlay" class="report-overlay">
-        <div class="report-header">
-            <h2 id="report-title">报表标题</h2>
-            <div class="close-button" onclick="closeReport()">❌</div>
+        <!-- 新增潜客挖掘报表弹出页面 -->
+        <div id="report-overlay" class="report-overlay">
+            <div class="report-header">
+                <h2 id="report-title">报表标题</h2>
+                <div class="close-button" onclick="closeReport()">❌</div>
+            </div>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>←</th>
+                        <th>明</th>
+                        <th>细</th>
+                        <th>→</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>数据1</td>
+                        <td>数据2</td>
+                        <td>数据3</td>
+                        <td>数据4</td>
+                    </tr>
+                    <tr>
+                        <td>数据5</td>
+                        <td>数据6</td>
+                        <td>数据7</td>
+                        <td>数据8</td>
+                    </tr>
+                    <tr>
+                        <td>数据9</td>
+                        <td>数据10</td>
+                        <td>数据11</td>
+                        <td>数据12</td>
+                    </tr>
+                    <tr>
+                        <td>数据13</td>
+                        <td>数据14</td>
+                        <td>数据15</td>
+                        <td>数据16</td>
+                    </tr>
+                    <tr>
+                        <td>数据17</td>
+                        <td>数据18</td>
+                        <td>数据19</td>
+                        <td>数据20</td>
+                    </tr>
+                    <tr>
+                        <td>数据21</td>
+                        <td>数据22</td>
+                        <td>数据23</td>
+                        <td>数据24</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <table class="report-table">
-            <thead>
-            <tr>
-                <th>←</th>
-                <th>明</th>
-                <th>细</th>
-                <th>→</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>数据1</td>
-                <td>数据2</td>
-                <td>数据3</td>
-                <td>数据4</td>
-            </tr>
-            <tr>
-                <td>数据5</td>
-                <td>数据6</td>
-                <td>数据7</td>
-                <td>数据8</td>
-            </tr>
-            <tr>
-                <td>数据9</td>
-                <td>数据10</td>
-                <td>数据11</td>
-                <td>数据12</td>
-            </tr>
-            <tr>
-                <td>数据13</td>
-                <td>数据14</td>
-                <td>数据15</td>
-                <td>数据16</td>
-            </tr>
-            <tr>
-                <td>数据17</td>
-                <td>数据18</td>
-                <td>数据19</td>
-                <td>数据20</td>
-            </tr>
-            <tr>
-                <td>数据21</td>
-                <td>数据22</td>
-                <td>数据23</td>
-                <td>数据24</td>
-            </tr>
-            </tbody>
-        </table>
     </div>
-</div>
-<div class="menu">
-    <div class="menu-item active" onclick="showPage('home')">
-        <i>🏠</i>
-        <span>首页</span>
+    <div class="menu">
+        <div class="menu-item active" onclick="showPage('home')">
+            <i>🏠</i>
+            <span>首页</span>
+        </div>
+        <div class="menu-item" onclick="showPage('business')">
+            <i>💼</i>
+            <span>业务</span>
+        </div>
+        <div class="menu-item" onclick="showPage('oss')">
+            <i>📊</i>
+            <span>OSS</span>
+        </div>
+        <div class="menu-item" onclick="showPage('workorder')">
+            <i>📝</i>
+            <span>工单</span>
+        </div>
+        <div class="menu-item" onclick="showPage('grid')">
+            <i>🔍</i>
+            <span>数据</span>
+        </div>
     </div>
-    <div class="menu-item" onclick="showPage('business')">
-        <i>💼</i>
-        <span>业务</span>
-    </div>
-    <div class="menu-item" onclick="showPage('oss')">
-        <i>📊</i>
-        <span>OSS</span>
-    </div>
-    <div class="menu-item" onclick="showPage('workorder')">
-        <i>📝</i>
-        <span>工单</span>
-    </div>
-    <div class="menu-item" onclick="showPage('grid')">
-        <i>🔍</i>
-        <span>数据</span>
-    </div>
-</div>
 
 
-<script>
-    // 切换页面显示的函数
-    function showPage(pageId) {
-        const pages = document.querySelectorAll('.page');
-        pages.forEach(page => {
-            if (page.id === pageId) {
-                page.classList.remove('hidden'); // 显示当前页面
-            } else {
-                page.classList.add('hidden'); // 隐藏其他页面
-            }
-        });
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            item.classList.remove('active'); // 移除所有active类
-        });
-        const activeItem = document.querySelector(`.menu-item[onclick*="${pageId}"]`);
-        if (activeItem) {
-            activeItem.classList.add('active'); // 为当前点击的项添加active类
-        }
 
-        // 如果切换到审核页面，重置所有 audit-box 的显示状态
-        if (pageId === 'business') {
-            const auditBoxes = document.querySelectorAll('.audit-box');
-            auditBoxes.forEach(box => {
-                box.style.display = 'flex'; // 显示所有 audit-box
+    <script>
+        // 切换页面显示的函数
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.remove('hidden'); // 显示当前页面
+                } else {
+                    page.classList.add('hidden'); // 隐藏其他页面
+                }
             });
-        }
-    }
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active'); // 移除所有active类
+            });
+            const activeItem = document.querySelector(`.menu-item[onclick*="${pageId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active'); // 为当前点击的项添加active类
+            }
 
-    // 切换网格内容的函数
-    function showGridContent(contentId) {
-        const gridItems = document.querySelectorAll('.grid-item');
-        gridItems.forEach(item => {
-            item.classList.remove('active'); // 移除所有active类
+            // 如果切换到审核页面，重置所有 audit-box 的显示状态
+            if (pageId === 'business') {
+                const auditBoxes = document.querySelectorAll('.audit-box');
+                auditBoxes.forEach(box => {
+                    box.style.display = 'flex'; // 显示所有 audit-box
+                });
+            }
+        }
+
+        // 切换网格内容的函数
+        function showGridContent(contentId) {
+            const gridItems = document.querySelectorAll('.grid-item');
+            gridItems.forEach(item => {
+                item.classList.remove('active'); // 移除所有active类
+            });
+            const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active'); // 为当前点击的项添加active类
+            }
+            const gridContentText = document.getElementById('grid-content-text');
+            switch (contentId) {
+                case 'realtime':
+                    gridContentText.textContent = '这里是业绩追踪的内容';
+                    break;
+                case 'marketing':
+                    gridContentText.textContent = '这里是潜客挖掘的内容';
+                    break;
+                case 'trend':
+                    gridContentText.textContent = '这里是趋势预测的内容';
+                    break;
+                case 'custom':
+                    gridContentText.textContent = '这里是智能查询';
+                    break;
+                default:
+                    gridContentText.textContent = '点击选择内容';
+            }
+            document.getElementById('grid-content').classList.remove('hidden');
+        }
+        // 显示潜客挖掘报表列表
+        function showGridContent(contentId) {
+            const gridItems = document.querySelectorAll('.grid-item');
+            gridItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+            const gridContentText = document.getElementById('grid-content-text');
+            const marketingReports = document.getElementById('marketing-reports');
+            switch (contentId) {
+                case 'realtime':
+                    gridContentText.textContent = '这里是实时业绩的内容';
+                    marketingReports.classList.add('hidden');
+                    break;
+                case 'marketing':
+                    gridContentText.textContent = '';
+                    marketingReports.classList.remove('hidden');
+                    break;
+                case 'trend':
+                    gridContentText.textContent = '这里是趋势预测的内容';
+                    marketingReports.classList.add('hidden');
+                    break;
+                case 'custom':
+                    gridContentText.textContent = '这里是自定义的内容';
+                    marketingReports.classList.add('hidden');
+                    break;
+                default:
+                    gridContentText.textContent = '点击选择内容';
+                    marketingReports.classList.add('hidden');
+            }
+            document.getElementById('grid-content').classList.remove('hidden');
+        }
+
+        // 显示报表页面
+        function showReport(reportId) {
+            const reportOverlay = document.getElementById('report-overlay');
+            const reportTitle = document.getElementById('report-title');
+            reportTitle.textContent = reportId.replace('report', '报表 ');
+            reportOverlay.classList.add('open');
+        }
+
+        // 关闭报表页面
+        function closeReport() {
+            const reportOverlay = document.getElementById('report-overlay');
+            reportOverlay.classList.remove('open');
+        }
+
+
+        // 显示全屏弹出页面
+        document.querySelector('.search').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block'; // 显示全屏弹出页面
+            setTimeout(() => {
+                overlay.classList.add('open'); // 添加展开动画
+            }, 10); // 延迟 10ms 确保样式生效
         });
-        const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
-        if (activeItem) {
-            activeItem.classList.add('active'); // 为当前点击的项添加active类
-        }
-        const gridContentText = document.getElementById('grid-content-text');
-        switch (contentId) {
-            case 'realtime':
-                gridContentText.textContent = '这里是业绩追踪的内容';
-                break;
-            case 'marketing':
-                gridContentText.textContent = '这里是潜客挖掘的内容';
-                break;
-            case 'trend':
-                gridContentText.textContent = '这里是趋势预测的内容';
-                break;
-            case 'custom':
-                gridContentText.textContent = '这里是智能查询';
-                break;
-            default:
-                gridContentText.textContent = '点击选择内容';
-        }
-        document.getElementById('grid-content').classList.remove('hidden');
-    }
-    // 显示潜客挖掘报表列表
-    function showGridContent(contentId) {
-        const gridItems = document.querySelectorAll('.grid-item');
-        gridItems.forEach(item => {
-            item.classList.remove('active');
+
+        // 点击 back-button 仅隐藏全屏弹出页面
+        document.querySelector('.back-button').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.remove('open'); // 关闭抽屉效果
+            setTimeout(() => {
+                overlay.style.display = 'none'; // 隐藏全屏弹出页面
+            }, 300); // 等待动画完成后再隐藏
         });
-        const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
-        if (activeItem) {
-            activeItem.classList.add('active');
-        }
-        const gridContentText = document.getElementById('grid-content-text');
-        const marketingReports = document.getElementById('marketing-reports');
-        switch (contentId) {
-            case 'realtime':
-                gridContentText.textContent = '这里是实时业绩的内容';
-                marketingReports.classList.add('hidden');
-                break;
-            case 'marketing':
-                gridContentText.textContent = '';
-                marketingReports.classList.remove('hidden');
-                break;
-            case 'trend':
-                gridContentText.textContent = '这里是趋势预测的内容';
-                marketingReports.classList.add('hidden');
-                break;
-            case 'custom':
-                gridContentText.textContent = '这里是自定义的内容';
-                marketingReports.classList.add('hidden');
-                break;
-            default:
-                gridContentText.textContent = '点击选择内容';
-                marketingReports.classList.add('hidden');
-        }
-        document.getElementById('grid-content').classList.remove('hidden');
-    }
 
-    // 显示报表页面
-    function showReport(reportId) {
-        const reportOverlay = document.getElementById('report-overlay');
-        const reportTitle = document.getElementById('report-title');
-        reportTitle.textContent = reportId.replace('report', '报表 ');
-        reportOverlay.classList.add('open');
-    }
-
-    // 关闭报表页面
-    function closeReport() {
-        const reportOverlay = document.getElementById('report-overlay');
-        reportOverlay.classList.remove('open');
-    }
+        // 点击close-zhbutton 关闭聊天页面
+        document.querySelector('.close-zhbutton').addEventListener('click', () => {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = ''; // 清空聊天内容
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none'; // 直接关闭全屏弹出页面
+        });
 
 
-  // 显示全屏弹出页面
-document.querySelector('.search').addEventListener('click', () => {
-const overlay = document.getElementById('overlay');
-overlay.style.display = 'block'; // 显示全屏弹出页面
-setTimeout(() => {
-    overlay.classList.add('open'); // 添加展开动画
-}, 10); // 延迟 10ms 确保样式生效
-});
-
-// 点击 back-button 仅隐藏全屏弹出页面
-document.querySelector('.back-button').addEventListener('click', () => {
-const overlay = document.getElementById('overlay');
-overlay.classList.remove('open'); // 关闭抽屉效果
-setTimeout(() => {
-    overlay.style.display = 'none'; // 隐藏全屏弹出页面
-}, 300); // 等待动画完成后再隐藏
-});
-
-// 点击close-zhbutton 关闭聊天页面
-document.querySelector('.close-zhbutton').addEventListener('click', () => {
-const chatContainer = document.getElementById('chat-container');
-chatContainer.innerHTML = ''; // 清空聊天内容
-const overlay = document.getElementById('overlay');
-overlay.style.display = 'none'; // 直接关闭全屏弹出页面
-});
-
-
-// 发送消息并显示在聊天区域
+        // 发送消息并显示在聊天区域
         function sendMessage() {
             const input = document.getElementById('question-input');
             const messageText = input.value.trim();
@@ -1507,110 +1688,110 @@ overlay.style.display = 'none'; // 直接关闭全屏弹出页面
                 document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
             }, 500);
         }
-// 监听全屏弹出页面的触摸事件
-let startY = 0; // 记录触摸起始位置
-const overlay = document.getElementById('overlay');
+        // 监听全屏弹出页面的触摸事件
+        let startY = 0; // 记录触摸起始位置
+        const overlay = document.getElementById('overlay');
 
-overlay.addEventListener('touchstart', (e) => {
-startY = e.touches[0].clientY; // 记录起始 Y 坐标
-});
-
-overlay.addEventListener('touchmove', (e) => {
-const currentY = e.touches[0].clientY; // 获取当前 Y 坐标
-const deltaY = currentY - startY; // 计算滑动距离
-
-if (deltaY > 0) { // 向下滑动
-    overlay.style.top = `${Math.min(90 + (deltaY / window.innerHeight * 100), 90)}%`; // 限制滑动范围
-}
-});
-
-overlay.addEventListener('touchend', (e) => {
-const currentY = e.changedTouches[0].clientY; // 获取结束 Y 坐标
-const deltaY = currentY - startY; // 计算滑动距离
-
-if (deltaY > 50) { // 如果向下滑动超过 50px
-    closeOverlay(); // 关闭页面
-} else {
-    overlay.style.top = '0'; // 否则回到完全展开状态
-}
-});
-
-
-
-
-
-    // 切换square-box的背景颜色并显示右侧内容
-    function toggleSquareBox(element, contentId) {
-        const squareBoxes = document.querySelectorAll('.square-box');
-        squareBoxes.forEach(box => {
-            box.classList.remove('active'); // 移除所有active类
+        overlay.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY; // 记录起始 Y 坐标
         });
-        element.classList.add('active'); // 为当前点击的项添加active类
 
-        const rightContents = document.querySelectorAll('.right-content');
-        rightContents.forEach(content => {
-            content.classList.remove('active'); // 隐藏所有右侧内容
+        overlay.addEventListener('touchmove', (e) => {
+            const currentY = e.touches[0].clientY; // 获取当前 Y 坐标
+            const deltaY = currentY - startY; // 计算滑动距离
+
+            if (deltaY > 0) { // 向下滑动
+                overlay.style.top = `${Math.min(90 + (deltaY / window.innerHeight * 100), 90)}%`; // 限制滑动范围
+            }
         });
-        const activeContent = document.getElementById(`right-content-${contentId}`);
-        if (activeContent) {
-            activeContent.classList.add('active'); // 显示对应的右侧内容
+
+        overlay.addEventListener('touchend', (e) => {
+            const currentY = e.changedTouches[0].clientY; // 获取结束 Y 坐标
+            const deltaY = currentY - startY; // 计算滑动距离
+
+            if (deltaY > 50) { // 如果向下滑动超过 50px
+                closeOverlay(); // 关闭页面
+            } else {
+                overlay.style.top = '0'; // 否则回到完全展开状态
+            }
+        });
+
+
+
+
+
+        // 切换square-box的背景颜色并显示右侧内容
+        function toggleSquareBox(element, contentId) {
+            const squareBoxes = document.querySelectorAll('.square-box');
+            squareBoxes.forEach(box => {
+                box.classList.remove('active'); // 移除所有active类
+            });
+            element.classList.add('active'); // 为当前点击的项添加active类
+
+            const rightContents = document.querySelectorAll('.right-content');
+            rightContents.forEach(content => {
+                content.classList.remove('active'); // 隐藏所有右侧内容
+            });
+            const activeContent = document.getElementById(`right-content-${contentId}`);
+            if (activeContent) {
+                activeContent.classList.add('active'); // 显示对应的右侧内容
+            }
         }
-    }
 
-   // 轮播图翻页功能
-function goToPage(pageIndex) {
-const carousel = document.querySelector('.carousel');
-const indicators = document.querySelectorAll('.carousel-indicators .indicator');
-const width = carousel.scrollWidth / indicators.length;
-carousel.scrollTo({
-    left: pageIndex * width,
-    behavior: 'smooth'
-});
-updateIndicators(pageIndex); // 更新小圆点状态
-}
+        // 轮播图翻页功能
+        function goToPage(pageIndex) {
+            const carousel = document.querySelector('.carousel');
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            const width = carousel.scrollWidth / indicators.length;
+            carousel.scrollTo({
+                left: pageIndex * width,
+                behavior: 'smooth'
+            });
+            updateIndicators(pageIndex); // 更新小圆点状态
+        }
 
-// 更新小圆点状态
-function updateIndicators(activeIndex) {
-const indicators = document.querySelectorAll('.carousel-indicators .indicator');
-indicators.forEach((indicator, index) => {
-    if (index === activeIndex) {
-        indicator.classList.add('active'); // 当前页小圆点变为空心
-    } else {
-        indicator.classList.remove('active'); // 其他小圆点变为实心
-    }
-});
-}
+        // 更新小圆点状态
+        function updateIndicators(activeIndex) {
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === activeIndex) {
+                    indicator.classList.add('active'); // 当前页小圆点变为空心
+                } else {
+                    indicator.classList.remove('active'); // 其他小圆点变为实心
+                }
+            });
+        }
 
-// 监听轮播图的滑动事件
-document.querySelector('.carousel').addEventListener('scroll', () => {
-const carousel = document.querySelector('.carousel');
-const indicators = document.querySelectorAll('.carousel-indicators .indicator');
-const scrollLeft = carousel.scrollLeft;
-const width = carousel.scrollWidth / indicators.length;
-const activeIndex = Math.round(scrollLeft / width); // 计算当前页索引
-updateIndicators(activeIndex); // 更新小圆点状态
-});
+        // 监听轮播图的滑动事件
+        document.querySelector('.carousel').addEventListener('scroll', () => {
+            const carousel = document.querySelector('.carousel');
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            const scrollLeft = carousel.scrollLeft;
+            const width = carousel.scrollWidth / indicators.length;
+            const activeIndex = Math.round(scrollLeft / width); // 计算当前页索引
+            updateIndicators(activeIndex); // 更新小圆点状态
+        });
 
 
-    // 处理审核按钮点击事件
-    function handleAuditAction(button) {
-        const auditBox = button.closest('.audit-box');
-        auditBox.style.display = 'none'; // 隐藏当前 audit-box
-    }
+        // 处理审核按钮点击事件
+        function handleAuditAction(button) {
+            const auditBox = button.closest('.audit-box');
+            auditBox.style.display = 'none'; // 隐藏当前 audit-box
+        }
 
-    // 初始化轮播图
-    document.addEventListener('DOMContentLoaded', () => {
-        goToPage(0); // 默认显示第一页
-    });
+        // 初始化轮播图
+        document.addEventListener('DOMContentLoaded', () => {
+            goToPage(0); // 默认显示第一页
+        });
 
-    // 点击“待审核”跳转到审核页面
-    document.getElementById('approval').addEventListener('click', () => {
-        showPage('business'); // 跳转到业务页面
-        toggleSquareBox(document.querySelector('.square-box[onclick*="审核"]'), '审核'); // 激活审核页面
-    });
+        // 点击“待审核”跳转到审核页面
+        document.getElementById('approval').addEventListener('click', () => {
+            showPage('business'); // 跳转到业务页面
+            toggleSquareBox(document.querySelector('.square-box[onclick*="审核"]'), '审核'); // 激活审核页面
+        });
 
-// 模拟OSS页面
-document.addEventListener('DOMContentLoaded', function() {
+        // 模拟OSS页面
+        document.addEventListener('DOMContentLoaded', function () {
             const ossQueryBtn = document.getElementById('ossQueryBtn');
             const ossBasicInfoContainer = document.getElementById('ossBasicInfoContainer');
             const ossDeviceName = document.getElementById('ossDeviceName');
@@ -1622,7 +1803,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const ossUserTableBody = document.getElementById('ossUserTableBody');
             const ossLoadingMore = document.getElementById('ossLoadingMore');
             const ossNoMoreData = document.getElementById('ossNoMoreData');
-            
+
             // 模拟数据 - 20户
             const ossMockData = {
                 deviceName: '滨海宿舍二期4#2门',
@@ -1630,53 +1811,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 onlineTime: '100天05小时04分01秒',
                 userCount: 20,
                 users: Array(20).fill().map((_, i) => ({
-                    mac: '00999F1AAA' + (i+1).toString().padStart(2, '0'),
-                    attenuation: (40 + i%5) + 'dB',
+                    mac: '00999F1AAA' + (i + 1).toString().padStart(2, '0'),
+                    attenuation: (40 + i % 5) + 'dB',
                     phySpeed: '224/246 Mbps',
-                    code: '123456789' + (i+1).toString().padStart(3, '0'),
-                    name: ['张','李','王','刘','陈'][i%5] + ['三','四','五','六','七','八','九','十','十一','十二'][i%10],
-                    address: `某某市实验区滨江道滨海花园小区${i+1}-${i+1}-${i+1}`
+                    code: '123456789' + (i + 1).toString().padStart(3, '0'),
+                    name: ['张', '李', '王', '刘', '陈'][i % 5] + ['三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'][i % 10],
+                    address: `某某市实验区滨江道滨海花园小区${i + 1}-${i + 1}-${i + 1}`
                 }))
             };
-            
+
             let ossCurrentIndex = 0;
             const ossBatchSize = 4; // 每次加载4条
             let ossIsLoading = false;
             let ossAllDataLoaded = false;
-            
+
             // 查询按钮点击事件
-            ossQueryBtn.addEventListener('click', function() {
+            ossQueryBtn.addEventListener('click', function () {
                 // 填充模拟数据
                 ossDeviceName.textContent = ossMockData.deviceName;
                 ossMacAddress.textContent = ossMockData.macAddress;
                 ossOnlineTime.textContent = ossMockData.onlineTime;
                 ossUserCount.textContent = ossMockData.userCount;
-                
+
                 // 显示基本信息
                 ossBasicInfoContainer.style.display = 'block';
-                
+
                 // 隐藏用户表格
                 ossUserTableContainer.style.display = 'none';
-                
+
                 // 重置用户表格
                 ossUserTableBody.innerHTML = '';
                 ossCurrentIndex = 0;
                 ossAllDataLoaded = false;
                 ossNoMoreData.style.display = 'none';
             });
-            
+
             // 加载用户数据函数
             function ossLoadMoreUsers() {
                 if (ossIsLoading || ossAllDataLoaded) return;
-                
+
                 ossIsLoading = true;
                 ossLoadingMore.style.display = 'block';
-                
+
                 // 模拟网络延迟
-                setTimeout(function() {
+                setTimeout(function () {
                     const remainingUsers = ossMockData.users.slice(ossCurrentIndex, ossCurrentIndex + ossBatchSize);
                     ossCurrentIndex += remainingUsers.length;
-                    
+
                     remainingUsers.forEach(user => {
                         const row = document.createElement('tr');
                         row.className = 'oss-user-row';
@@ -1685,7 +1866,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>${user.attenuation}</td>
                             <td>${user.phySpeed}</td>
                         `;
-                        
+
                         const infoRow = document.createElement('tr');
                         infoRow.className = 'oss-user-info-row';
                         infoRow.innerHTML = `
@@ -1697,36 +1878,36 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </td>
                         `;
-                        
+
                         ossUserTableBody.appendChild(row);
                         ossUserTableBody.appendChild(infoRow);
-                        
+
                         // 添加点击事件来显示/隐藏详细信息
-                        row.addEventListener('click', function() {
+                        row.addEventListener('click', function () {
                             const infoDiv = infoRow.querySelector('.oss-user-info');
                             infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
                         });
                     });
-                    
+
                     // 检查是否已加载全部数据
                     if (ossCurrentIndex >= ossMockData.users.length) {
                         ossAllDataLoaded = true;
                         ossNoMoreData.style.display = 'block';
                     }
-                    
+
                     ossLoadingMore.style.display = 'none';
                     ossIsLoading = false;
                 }, 800); // 0.8秒延迟模拟网络请求
             }
-            
+
             // 在线用户点击事件
-            ossUserCountLink.addEventListener('click', function(e) {
+            ossUserCountLink.addEventListener('click', function (e) {
                 e.preventDefault();
-                
+
                 // 显示/隐藏用户表格
                 if (ossUserTableContainer.style.display === 'none') {
                     ossUserTableContainer.style.display = 'block';
-                    
+
                     // 如果表格是空的，加载第一批数据
                     if (ossUserTableBody.children.length === 0) {
                         ossLoadMoreUsers();
@@ -1735,21 +1916,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     ossUserTableContainer.style.display = 'none';
                 }
             });
-            
+
             // 滚动加载更多
-            ossUserTableContainer.addEventListener('scroll', function() {
+            ossUserTableContainer.addEventListener('scroll', function () {
                 if (ossIsLoading || ossAllDataLoaded) return;
-                
+
                 const { scrollTop, scrollHeight, clientHeight } = ossUserTableContainer;
-                
+
                 // 当滚动到接近底部时加载更多
                 if (scrollTop + clientHeight >= scrollHeight - 50) {
                     ossLoadMoreUsers();
                 }
             });
         });
+        // 动态计算设备底部圆角
+        function setSafeAreaPadding() {
+            const bottomPadding = window.innerHeight - document.documentElement.clientHeight;
+            if (bottomPadding > 0) {
+                document.body.style.paddingBottom = bottomPadding + "px";
+            } else {
+                // 默认值（如手势导航条高度）
+                document.body.style.paddingBottom = "48px";
+            }
+        }
 
+        // 初始化 + 监听横竖屏变化
+        window.addEventListener("resize", setSafeAreaPadding);
+        setSafeAreaPadding();
 
-</script>
+    </script>
 </body>
-</html>  
+
+</html>
