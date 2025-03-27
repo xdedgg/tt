@@ -1139,7 +1139,7 @@
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            
+            max-height: 500px;
             overflow-y: auto;
             border: 1px solid #e0e0e0;
             border-radius: 10px;
@@ -2344,7 +2344,7 @@
             };
 
             let ossCurrentIndex = 0;
-            const ossBatchSize = 6; // 每次加载6条
+            const ossBatchSize = 4; // 每次加载4条
             let ossIsLoading = false;
             let ossAllDataLoaded = false;
 
@@ -2532,28 +2532,32 @@
             setInterval(updateCurrentTime, 1000);
             updateCurrentTime();
 
-            // 定位时间（获取后固定不变）
-            let phchLocationTimestamp = null;
+           // 将模拟定位逻辑封装到一个函数中
+function simulateLocation() {
+    const locations = [
+        "和平区光华路8号15楼",
+        "光华区某大街15号3单元",
+        "光华区金融大街1号B座"
+    ];
+    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
 
-            // 模拟定位
-            setTimeout(() => {
-                const locations = [
-                    "和平区光华路8号15楼",
-                    "光华区某大街15号3单元",
-                    "光华区金融大街1号B座"
-                ];
-                const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+    // 记录定位时间（固定不变）
+    const now = new Date();
+    const locationTimeStr = now.toLocaleTimeString('zh-CN', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 
-                // 记录定位时间（固定不变）
-                phchLocationTimestamp = new Date();
-                const locationTimeStr = phchLocationTimestamp.toLocaleTimeString('zh-CN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+    document.getElementById('phch-locationValue').textContent = randomLocation;
+    document.getElementById('phch-locationTime').textContent = `定位时间: ${locationTimeStr}`;
+}
 
-                document.getElementById('phch-locationValue').textContent = randomLocation;
-                document.getElementById('phch-locationTime').textContent = `定位时间: ${locationTimeStr}`;
-            }, 1500);
+// 在用户点击进入打卡页面时调用模拟定位函数
+document.getElementById('firstSetting').addEventListener('click', function () {
+    subPanel.style.display = 'block';
+    // 调用模拟定位函数
+    setTimeout(simulateLocation, 1500); // 模拟1.5秒的延迟
+});
 
             // 拍照功能
             const phchPhotoPlaceholder = document.getElementById('phch-photoPlaceholder');
