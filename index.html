@@ -8,7 +8,7 @@
     <style>
         /* 全局样式 */
         body {
-            overflow: hidden; /* 禁用滚动 */
+            
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
@@ -29,6 +29,7 @@
             align-items: center;
             padding: 10px;
             background-color: #f8f8f8;
+            
         }
 
         .header .approval {
@@ -79,10 +80,6 @@
         /* 内容区域样式 - 所有页面共用 */
         .content {
             flex: 1;
-            overflow: hidden; /* 禁用滚动 */
-            
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
             padding: 2px;
             position: relative;
             /* 使业务页面可以定位在其内部 */
@@ -260,10 +257,7 @@
             display: none;
         }
 
-        /* 页面图片样式 - OSS和首页页面 */
-        .page {
-            overflow: hidden; /* 禁用滚动 */ 
-        }
+        
 
         /* 业务页面样式 - 业务页面 */
         .business-container {
@@ -574,7 +568,7 @@
         /* 聊天窗口样式 */
         .overlay .chat-container {
             flex: 1;
-            overflow-y: scroll;
+            overflow: hidden;
             padding: 15px;
             display: flex;
             flex-direction: column;
@@ -582,6 +576,7 @@
             margin-top: 30px;
             height: calc(100% - 160px);
             background-color: #f5f7fa;
+            
         }
 
         /* 消息气泡样式 */
@@ -979,7 +974,7 @@
         }
 
         .oss-h1 {
-            overflow: hidden; /* 禁用滚动 */
+            
             text-align: center;
             margin-bottom: 15px;
             color: #2c3e50;
@@ -1274,7 +1269,8 @@
             bottom: 0;
             background-color: white;
             z-index: 1000;
-            overflow-y: auto;
+            overflow: hidden; /* 禁用滚动 */
+            
         }
 
         /* 返回按钮 */
@@ -1350,13 +1346,15 @@
             background-color: white;
             z-index: 1001;
             padding: 20px;
+            overflow: auto; 
+            
         }
 
         .sub-panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 0px;
         }
 
         .close-btn {
@@ -1375,6 +1373,7 @@
             padding: 16px;
             min-height: 100vh;
             box-sizing: border-box;
+            overflow: auto;
         }
 
         .phch-h1 {
@@ -2488,7 +2487,7 @@
         // 点击设置图标显示全屏设置面板
         settingsBtn.addEventListener('click', function () {
             settingsPanel.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // 防止背景滚动
+            
         });
 
         // 点击返回按钮隐藏设置面板
