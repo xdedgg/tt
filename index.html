@@ -8,6 +8,7 @@
     <style>
         /* 全局样式 */
         body {
+            overflow: hidden; /* 禁用滚动 */
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
@@ -78,7 +79,8 @@
         /* 内容区域样式 - 所有页面共用 */
         .content {
             flex: 1;
-            overflow: auto;
+            overflow: hidden; /* 禁用滚动 */
+            
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 2px;
@@ -258,12 +260,9 @@
             display: none;
         }
 
-        /* 页面图片样式 - OSS和工单页面 */
-        .page img {
-            width: 100%;
-            /* 图片宽度自适应 */
-            height: auto;
-            /* 保持图片比例 */
+        /* 页面图片样式 - OSS和首页页面 */
+        .page {
+            overflow: hidden; /* 禁用滚动 */ 
         }
 
         /* 业务页面样式 - 业务页面 */
@@ -298,8 +297,7 @@
             /* 水平居中 */
             justify-content: flex-start;
             /* 从顶部开始排列 */
-            padding-top: 10px;
-            /* 顶部内边距 */
+            
         }
 
         .business-container .gray-box .square-box {
@@ -576,12 +574,12 @@
         /* 聊天窗口样式 */
         .overlay .chat-container {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: scroll;
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-top: 60px;
+            margin-top: 30px;
             height: calc(100% - 160px);
             background-color: #f5f7fa;
         }
@@ -981,6 +979,7 @@
         }
 
         .oss-h1 {
+            overflow: hidden; /* 禁用滚动 */
             text-align: center;
             margin-bottom: 15px;
             color: #2c3e50;
@@ -1145,7 +1144,7 @@
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            max-height: 500px;
+            
             overflow-y: auto;
             border: 1px solid #e0e0e0;
             border-radius: 10px;
@@ -2154,21 +2153,21 @@
         }
 
 
-        // 显示全屏弹出页面
+        // 显示智慧小助手全屏弹出页面
         document.querySelector('.search').addEventListener('click', () => {
             const overlay = document.getElementById('overlay');
-            overlay.style.display = 'block'; // 显示全屏弹出页面
+            overlay.style.display = 'block'; // 显示智慧小助手全屏弹出页面
             setTimeout(() => {
                 overlay.classList.add('open'); // 添加展开动画
             }, 10); // 延迟 10ms 确保样式生效
         });
 
-        // 点击 back-button 仅隐藏全屏弹出页面
+        // 点击 back-button 仅隐藏智慧小助手全屏弹出页面
         document.querySelector('.back-button').addEventListener('click', () => {
             const overlay = document.getElementById('overlay');
             overlay.classList.remove('open'); // 关闭抽屉效果
             setTimeout(() => {
-                overlay.style.display = 'none'; // 隐藏全屏弹出页面
+                overlay.style.display = 'none'; // 隐藏智慧小助手全屏弹出页面
             }, 300); // 等待动画完成后再隐藏
         });
 
