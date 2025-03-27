@@ -462,8 +462,8 @@
             /* 鼠标悬停时按钮透明度变化 */
         }
 
-         /* 全屏弹出页面样式 - 智慧小助手 */
-         .overlay {
+        /* 全屏弹出页面样式 - 智慧小助手 */
+        .overlay {
             display: none;
             position: fixed;
             top: 90%;
@@ -600,8 +600,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 用户消息气泡 */
@@ -983,7 +990,7 @@
             /* 使用弹性布局使元素水平排列 */
             justify-content: space-between;
             /* 在元素之间创建均匀的空格 */
-             margin: 0 auto;
+            margin: 0 auto;
             /* 居中显示 */
             padding: 10px;
         }
@@ -1248,7 +1255,335 @@
             /* 去掉点击时的边框 */
         }
 
-        
+        /* 右上角设置页面的相关样式 */
+        /* 设置图标样式 */
+        .settings {
+            position: relative;
+            right: 15px;
+            top: 0px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 设置面板样式 - 初始隐藏 */
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            z-index: 2;
+        }
+
+        /* 红色头部区域 */
+        .settings-header {
+            background-color: #e74c3c;
+            height: 120px;
+            width: 100%;
+            position: relative;
+            padding: 20px;
+            padding-top: 60px;
+            /* 为返回按钮留出空间 */
+        }
+
+        /* 头像圆圈 */
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* 工号样式 */
+        .employee-id {
+            color: white;
+            font-size: 18px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 15px;
+        }
+
+        /* 设置项列表 */
+        .settings-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .settings-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .settings-item:after {
+            content: ">";
+            position: absolute;
+            right: 20px;
+            color: #999;
+        }
+
+        /* 子面板样式 - 初始隐藏 */
+        .sub-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1001;
+            padding: 20px;
+        }
+
+        .sub-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 打卡页面所有样式添加phch前缀 */
+        .phch-container {
+            max-width: 100%;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 16px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .phch-h1 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .phch-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .phch-info-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .phch-info-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            align-self: center;
+        }
+
+        .phch-info-value {
+            font-weight: 500;
+            color: #1e293b;
+            align-self: center;
+            word-break: break-all;
+        }
+
+        #phch-locationValue {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        #phch-locationTime {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        #phch-currentTime {
+            color: #2563eb;
+        }
+
+        .phch-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 0.75rem 0;
+            background-color: #f8fafc;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+
+        .phch-photo-section {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .phch-photo-placeholder {
+            width: 100%;
+            height: 180px;
+            margin: 0 auto;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .phch-photo-placeholder.active {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .phch-avatar {
+            display: none;
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .phch-avatar-head {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 0;
+            left: 20px;
+        }
+
+        .phch-avatar-body {
+            position: absolute;
+            width: 60px;
+            height: 50px;
+            background: #3b82f6;
+            border-radius: 15px;
+            bottom: 0;
+            left: 30px;
+        }
+
+        .phch-avatar-eye {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .phch-avatar-eye.left {
+            left: 35px;
+        }
+
+        .phch-avatar-eye.right {
+            right: 35px;
+        }
+
+        .phch-avatar-mouth {
+            position: absolute;
+            width: 24px;
+            height: 8px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            bottom: 25px;
+            left: 48px;
+        }
+
+        .phch-button-group {
+            display: flex;
+            gap: 0.75rem;
+            margin: 0.75rem 0;
+        }
+
+        .phch-button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #phch-takePhoto {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        #phch-takePhoto:hover {
+            background-color: #2563eb;
+        }
+
+        #phch-retakePhoto {
+            background-color: #f1f5f9;
+            color: #64748b;
+            display: none;
+        }
+
+        #phch-retakePhoto:hover {
+            background-color: #e2e8f0;
+        }
+
+        #phch-submitBtn {
+            background-color: #10b981;
+            color: white;
+            width: 100%;
+        }
+
+        #phch-submitBtn:hover {
+            background-color: #059669;
+        }
+
+        .phch-status {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .phch-photo-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        .phch-placeholder-text {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 
@@ -1284,7 +1619,89 @@
 
 
 
-        <div class="settings">⚙️</div> <!-- 设置图标 -->
+        <div class="settings" id="shezhi">⚙️</div> <!-- 设置图标 -->
+    </div>
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <!-- 返回按钮 -->
+        <div class="back-btn" id="backBtn">←</div>
+
+        <div class="settings-header">
+            <div class="avatar"></div>
+            <span class="employee-id">工号: 12345</span>
+        </div>
+
+        <ul class="settings-list">
+            <li class="settings-item" id="firstSetting">📷入户服务打卡</li>
+            <li class="settings-item">🎮修改密码</li>
+            <li class="settings-item">📩工单预警设置</li>
+            <li class="settings-item">📶检查更新</li>
+            <li class="settings-item">📅清除缓存</li>
+            <li class="settings-item">📱注销</li>
+        </ul>
+    </div>
+
+    <!-- 子面板 -->
+    <div class="sub-panel" id="subPanel">
+        <div class="sub-panel-header">
+            <span class="close-btn" id="closeSubPanel">×</span>
+        </div>
+        <div class="sub-panel-content">
+            <div class="phch-container">
+                <h1 class="phch-h1">入户服务打卡</h1>
+
+                <div class="phch-card">
+                    <div class="phch-info-grid">
+                        <div class="phch-info-label">员工</div>
+                        <div class="phch-info-value" id="phch-employeeValue">张师傅 (EMP21018)</div>
+
+                        <div class="phch-info-label">位置</div>
+                        <div>
+                            <div id="phch-locationValue">正在定位中...</div>
+                            <div id="phch-locationTime"></div>
+                        </div>
+
+                        <div class="phch-info-label">时间</div>
+                        <div class="phch-info-value" id="phch-currentTime"></div>
+                    </div>
+
+                    <select class="phch-select" id="phch-serviceType">
+                        <option value="">-- 选择服务类型 --</option>
+                        <option value="repair">设备维修</option>
+                        <option value="install">开户安装</option>
+                        <option value="inspect">营销推广</option>
+                        <option value="train">定期检查</option>
+                    </select>
+
+                    <div class="phch-photo-section">
+                        <div class="phch-photo-placeholder" id="phch-photoPlaceholder">
+                            <div class="phch-avatar" id="phch-avatar">
+                                <div class="phch-avatar-head"></div>
+                                <div class="phch-avatar-body"></div>
+                                <div class="phch-avatar-eye left"></div>
+                                <div class="phch-avatar-eye right"></div>
+                                <div class="phch-avatar-mouth"></div>
+                            </div>
+                            <div class="phch-placeholder-text" id="phch-placeholderText">点击下方按钮拍摄现场照片</div>
+                        </div>
+
+                        <div class="phch-button-group">
+                            <button class="phch-button" id="phch-takePhoto">拍照</button>
+                            <button class="phch-button" id="phch-retakePhoto">重拍</button>
+                        </div>
+
+                        <div class="phch-status" id="phch-photoStatus"></div>
+                        <div class="phch-photo-time" id="phch-photoTime"></div>
+                    </div>
+                </div>
+
+                <button class="phch-button" id="phch-submitBtn">提交打卡记录</button>
+            </div>
+
+
+
+
+        </div>
     </div>
     <div class="content">
         <div id="home" class="page">
@@ -1374,7 +1791,9 @@
                 </div>
                 <!-- 右侧内容区域 -->
                 <div id="right-content-固网" class="right-content active">
-                    <div class="dashed-box"><p class="zhushi-text">此部分不变</p></div>
+                    <div class="dashed-box">
+                        <p class="zhushi-text">此部分不变</p>
+                    </div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📁</i><span>固功1</span></div>
                         <div class="grid-item"><i>📊</i><span>固功2</span></div>
@@ -1388,7 +1807,9 @@
                     </div>
                 </div>
                 <div id="right-content-移网个人" class="right-content">
-                    <div class="dashed-box"><p class="zhushi-text">此部分不变</p></div>
+                    <div class="dashed-box">
+                        <p class="zhushi-text">此部分不变</p>
+                    </div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📱</i><span>移功1</span></div>
                         <div class="grid-item"><i>📶</i><span>移功2</span></div>
@@ -1402,7 +1823,9 @@
                     </div>
                 </div>
                 <div id="right-content-移网集团" class="right-content">
-                    <div class="dashed-box"><p class="zhushi-text">此部分如给代理商使用集团成员激活要特别注意权限设置</p></div>
+                    <div class="dashed-box">
+                        <p class="zhushi-text">此部分如给代理商使用集团成员激活要特别注意权限设置</p>
+                    </div>
                     <div class="grid-9">
                         <div class="grid-item"><i>🏢</i><span>集团成员激活</span></div>
                         <div class="grid-item"><i>👥</i><span>集团功能2</span></div>
@@ -1528,9 +1951,9 @@
             </div>
             <div id="grid-content" class="hidden">
                 <p id="grid-content-text">点击选择内容</p>
-         
-                
-                
+
+
+
                 <!-- 营销向导报表列表 -->
                 <div id="marketing-reports" class="hidden">
                     <div class="report-list">
@@ -1680,7 +2103,7 @@
         }
 
         // 切换数据内容的函数
-        
+
         function showGridContent(contentId) {
             const gridItems = document.querySelectorAll('.grid-item');
             gridItems.forEach(item => {
@@ -2055,6 +2478,159 @@
             isCollapsed = !isCollapsed;
         });
 
+        // 设置页面相关信息-获取DOM元素
+        const settingsBtn = document.getElementById('shezhi');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const backBtn = document.getElementById('backBtn');
+        const firstSetting = document.getElementById('firstSetting');
+        const subPanel = document.getElementById('subPanel');
+        const closeSubPanel = document.getElementById('closeSubPanel');
+
+        // 点击设置图标显示全屏设置面板
+        settingsBtn.addEventListener('click', function () {
+            settingsPanel.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+
+        // 点击返回按钮隐藏设置面板
+        backBtn.addEventListener('click', function () {
+            settingsPanel.style.display = 'none';
+            document.body.style.overflow = ''; // 恢复滚动
+        });
+
+        // 点击第一行设置项显示子面板
+        firstSetting.addEventListener('click', function () {
+            subPanel.style.display = 'block';
+        });
+
+        // 点击关闭按钮隐藏子面板
+        closeSubPanel.addEventListener('click', function () {
+            subPanel.style.display = 'none';
+        });
+
+        // 点击设置面板外部区域关闭面板
+        window.addEventListener('click', function (event) {
+            if (event.target === settingsPanel) {
+                settingsPanel.style.display = 'none';
+                document.body.style.overflow = ''; // 恢复滚动
+            }
+        });
+
+
+
+        // 使用IIFE封装所有代码，避免全局污染
+        (function () {
+            // 当前时间显示（实时更新）
+            function updateCurrentTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                document.getElementById('phch-currentTime').textContent = timeStr;
+            }
+            setInterval(updateCurrentTime, 1000);
+            updateCurrentTime();
+
+            // 定位时间（获取后固定不变）
+            let phchLocationTimestamp = null;
+
+            // 模拟定位
+            setTimeout(() => {
+                const locations = [
+                    "和平区光华路8号15楼",
+                    "光华区某大街15号3单元",
+                    "光华区金融大街1号B座"
+                ];
+                const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+
+                // 记录定位时间（固定不变）
+                phchLocationTimestamp = new Date();
+                const locationTimeStr = phchLocationTimestamp.toLocaleTimeString('zh-CN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                document.getElementById('phch-locationValue').textContent = randomLocation;
+                document.getElementById('phch-locationTime').textContent = `定位时间: ${locationTimeStr}`;
+            }, 1500);
+
+            // 拍照功能
+            const phchPhotoPlaceholder = document.getElementById('phch-photoPlaceholder');
+            const phchAvatar = document.getElementById('phch-avatar');
+            const phchPlaceholderText = document.getElementById('phch-placeholderText');
+            const phchTakePhotoBtn = document.getElementById('phch-takePhoto');
+            const phchRetakePhotoBtn = document.getElementById('phch-retakePhoto');
+            const phchPhotoStatus = document.getElementById('phch-photoStatus');
+            const phchPhotoTime = document.getElementById('phch-photoTime');
+
+            phchTakePhotoBtn.addEventListener('click', function () {
+                // 显示几何头像
+                phchAvatar.style.display = 'block';
+                phchPlaceholderText.style.display = 'none';
+                phchPhotoPlaceholder.classList.add('active');
+
+                // 更新状态
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                phchPhotoStatus.textContent = "已拍摄现场照片";
+                phchPhotoTime.textContent = "拍摄时间: " + timeStr;
+
+                // 切换按钮状态
+                phchTakePhotoBtn.style.display = 'none';
+                phchRetakePhotoBtn.style.display = 'block';
+
+                // 随机改变头像颜色
+                const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelector('.phch-avatar-head').style.background = randomColor;
+                document.querySelector('.phch-avatar-body').style.background = randomColor;
+
+                // 添加拍照动画
+                phchAvatar.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    phchAvatar.style.transform = 'scale(1)';
+                }, 300);
+            });
+
+            phchRetakePhotoBtn.addEventListener('click', function () {
+                // 重置拍照状态
+                phchTakePhotoBtn.style.display = 'block';
+                phchRetakePhotoBtn.style.display = 'none';
+                phchPhotoStatus.textContent = "";
+                phchPhotoTime.textContent = "";
+
+                // 隐藏头像显示提示文字
+                phchAvatar.style.display = 'none';
+                phchPlaceholderText.style.display = 'block';
+                phchPhotoPlaceholder.classList.remove('active');
+            });
+
+            // 提交功能
+            document.getElementById('phch-submitBtn').addEventListener('click', function () {
+                const serviceType = document.getElementById('phch-serviceType').value;
+                if (!serviceType) {
+                    alert('请选择服务类型');
+                    return;
+                }
+
+                if (!phchPhotoPlaceholder.classList.contains('active')) {
+                    alert('请先拍摄现场照片');
+                    return;
+                }
+
+                const employee = document.getElementById('phch-employeeValue').textContent;
+                const location = document.getElementById('phch-locationValue').textContent;
+                const locationTime = document.getElementById('phch-locationTime').textContent;
+                const currentTime = document.getElementById('phch-currentTime').textContent;
+                const photoTimeStr = phchPhotoTime.textContent.replace("拍摄时间: ", "");
+                const serviceText = document.getElementById('phch-serviceType').options[document.getElementById('phch-serviceType').selectedIndex].text;
+
+                alert(`打卡成功！\n\n${employee}\n服务类型: ${serviceText}\n服务地点: ${location}\n打卡时间: ${currentTime}\n入户时间：${locationTime}\n拍照时间: ${photoTimeStr}`);
+            });
+        })();
 
 
         // 动态计算设备底部圆角
