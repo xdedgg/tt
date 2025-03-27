@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
     <title>模拟app demo</title>
     <style>
         /* 全局样式 */
@@ -2626,7 +2626,7 @@
                 const photoTimeStr = phchPhotoTime.textContent.replace("拍摄时间: ", "");
                 const serviceText = document.getElementById('phch-serviceType').options[document.getElementById('phch-serviceType').selectedIndex].text;
 
-                alert(`打卡成功！\n\n${employee}\n服务类型: ${serviceText}\n服务地点: ${location}\n打卡时间: ${currentTime}\n入户时间：${locationTime}\n拍照时间: ${photoTimeStr}`);
+                alert(`打卡成功！\n\n${employee}\n服务类型: ${serviceText}\n服务地点: ${location}\n打卡时间: ${currentTime}\n入户${locationTime}\n拍照时间: ${photoTimeStr}`);
             });
         })();
 
