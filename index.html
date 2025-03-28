@@ -1439,6 +1439,7 @@
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 16px;
+            max-width: 100%; /* 防止溢出 */
         }
 
         .phch-photo-section {
@@ -2115,7 +2116,7 @@
             const marketingReports = document.getElementById('marketing-reports');
             switch (contentId) {
                 case 'realtime':
-                    gridContentText.textContent = '统一口径模板化查询：个人及网格的业绩看板，根据家客任务，在此体现网格业绩完成率、累计量，个人贡献值。多维度设计报表';
+                    gridContentText.textContent = '核心功能：依据家客任务统一口，展示个人及网格的业绩看板，如网格业绩完成率、累计量，个人贡献值。多维度设计报表。解决痛点：帮助一线人员了解情况，消除信息疑虑，认识差距，激发竞争意识，起到激励作用。';
                     marketingReports.classList.add('hidden');
                     break;
                 case 'marketing':
@@ -2123,11 +2124,11 @@
                     marketingReports.classList.remove('hidden');
                     break;
                 case 'trend':
-                    gridContentText.textContent = '根据客户消费金额，产品内容，推荐可升级套餐。结合客户自主订购产品，交费习惯，活跃度等信息进行业务推荐。营销话术等等。';
+                    gridContentText.textContent = '结合客户消费金额、产品内容、自主订购记录以及缴费习惯，推荐可升级套餐，挖掘潜在消费需求，预测客户缴费周期，并生成配套营销方案、产品打包方案及话术。解决痛点：营销策略依赖经验，缺乏分析数据支撑。打造个性化产品与营销方案生成器。（可将复杂界面在电脑端展示，手机端仅呈现简单结果）等。';
                     marketingReports.classList.add('hidden');
                     break;
                 case 'custom':
-                    gridContentText.textContent = '提供网格员自助拖拽条件，输出可交互数据透视表。';
+                    gridContentText.textContent = '自助拖拽条件，展示数据透视表。以图形化、自助方式赋能每个人自主分析的能力，解决写脚本的障碍。';
                     marketingReports.classList.add('hidden');
                     break;
                 default:
