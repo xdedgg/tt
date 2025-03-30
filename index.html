@@ -1517,7 +1517,7 @@
             height: 8px;
             background: white;
             border-radius: 0 0 12px 12px;
-            bottom: 25px;
+            bottom: 50px;
             left: 48px;
         }
 
@@ -1583,6 +1583,27 @@
         .phch-placeholder-text {
             color: #94a3b8;
             font-size: 0.875rem;
+        }
+
+        .zjss {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .zjss-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .zjss-input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
@@ -1745,13 +1766,13 @@
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第2页 - </p>
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第2页 - </p>
                     </div>
                     <div class="carousel-item">
-                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第3页 -</p>
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第3页 -</p>
                     </div>
                     <div class="carousel-item">
-                        <p>数据来源于自研报表，轮播展示各维度数据概况<br> - 第4页 -</p>
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第4页 -</p>
                     </div>
                 </div>
                 <div class="carousel-indicators">
@@ -1793,6 +1814,9 @@
                 <div id="right-content-固网" class="right-content active">
                     <div class="dashed-box">
                         <p class="zhushi-text">此部分不变</p>
+                    </div>
+                    <div class="zjss">
+                        <input type="text" class="zjss-input" placeholder="🔍客户搜索...">
                     </div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📁</i><span>固功1</span></div>
