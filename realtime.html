@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>业绩追踪看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 10px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .grid-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            padding: 5px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .progress-container {
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4b6cb7, #6a11cb);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .personal-stats {
+            display: flex; /* 修改为横向排列 */
+            justify-content: space-between; /* 添加间距 */
+        }
+        
+        .personal-stat {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .personal-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .personal-label {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        
+        .rank {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .rank:last-child {
+            border-bottom: none;
+        }
+        
+        .rank-number {
+            width: 25px;
+            height: 25px;
+            background-color: #4b6cb7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        
+        .rank-name {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .rank-value {
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .highlight {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        
+        <div class="card">
+            <div class="card-title">网格整体业绩</div>
+            <div class="grid-stats">
+                <div class="stat-item">
+                    <div class="stat-value">78.5%</div>
+                    <div class="stat-label">完成率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1,248</div>
+                    <div class="stat-label">累计量</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">网格排名</div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div>月度目标完成进度 (目标: 1,600)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 78.5%;"></div>
+                    <div class="progress-text">78.5%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">个人业绩贡献</div>
+            <div class="personal-stats">
+                <div class="personal-stat">
+                    <div class="personal-value">186</div>
+                    <div class="personal-label">个人完成量</div>
+                </div>
+                <div class="personal-stat">
+                    <div class="personal-value">112%</div>
+                    <div class="personal-label">个人完成率</div>
+                </div>
+                <div class="personal-stat">
+                    <div class="personal-value">14.9%</div>
+                    <div class="personal-label">网格贡献率</div>
+                </div>
+                <div class="personal-stat">
+                    <div class="personal-value">5</div>
+                    <div class="personal-label">个人排名</div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">月度趋势</div>
+            <div class="chart-container">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">网格成员排名</div>
+            <div class="rank">
+                <div class="rank-number">1</div>
+                <div class="rank-name">张三</div>
+                <div class="rank-value">224</div>
+            </div>
+            <div class="rank">
+                <div class="rank-number">2</div>
+                <div class="rank-name">李四</div>
+                <div class="rank-value">198</div>
+            </div>
+            <div class="rank">
+                <div class="rank-number">3</div>
+                <div class="rank-name">王五</div>
+                <div class="rank-value">187</div>
+            </div>
+            <div class="rank">
+                <div class="rank-number">4</div>
+                <div class="rank-name">赵六</div>
+                <div class="rank-value">175</div>
+            </div>
+            <div class="rank highlight">
+                <div class="rank-number">5</div>
+                <div class="rank-name">您</div>
+                <div class="rank-value">186</div>
+            </div>
+            <div class="rank">
+                <div class="rank-number">6</div>
+                <div class="rank-name">钱七</div>
+                <div class="rank-value">162</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">产品类型分布</div>
+            <div class="chart-container">
+                <canvas id="productChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 月度趋势图
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        const trendChart = new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['1日', '5日', '10日', '15日', '20日', '25日', '30日'],
+                datasets: [
+                    {
+                        label: '网格累计',
+                        data: [120, 250, 420, 580, 790, 1020, 1248],
+                        borderColor: '#4b6cb7',
+                        backgroundColor: 'rgba(75, 108, 183, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: '个人累计',
+                        data: [18, 42, 75, 102, 135, 160, 186],
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // 产品类型分布图
+        const productCtx = document.getElementById('productChart').getContext('2d');
+        const productChart = new Chart(productCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['产品A', '产品B', '产品C', '产品D'],
+                datasets: [{
+                    data: [35, 25, 20, 20],
+                    backgroundColor: [
+                        '#4b6cb7',
+                        '#6a11cb',
+                        '#ff6b6b',
+                        '#ffa502'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

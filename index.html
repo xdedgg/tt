@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+    <title>模拟app demo</title>
+    <style>
+        
+        /* 全局样式 */
+        body {
+            
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f5f5f5;
+            /* 页面底色设置为浅灰 */
+            padding-bottom: max(env(safe-area-inset-bottom),
+                    48px
+                    /* 默认 Android 手势导航高度 */
+                );
+        }
+
+        /* 头部样式 - 所有页面共用 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px 5px 10px;
+            background-color: #f8f8f8;
+            
+        }
+
+        .header .approval {
+            position: relative;
+        }
+
+        .header .approval .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .header .search {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .header .search i {
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .header .search span {
+            color: #999;
+            /* 灰色 */
+            font-size: 14px;
+        }
+
+        .header .settings {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 内容区域样式 - 所有页面共用 */
+        .content {
+            flex: 1;
+            padding: 2px;
+            position: relative;
+            /* 使业务页面可以定位在其内部 */
+            padding-bottom: 50px;
+            /* 添加底部内边距，避免被 menu 遮挡 */
+        }
+
+        
+
+        /* 悬浮文本框样式 - 首页 */
+        .floating-box {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: white;
+            /* 悬浮文本框内部为白色 */
+            overflow: hidden;
+            /* 隐藏超出部分 */
+        }
+
+        .floating-box img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* 轮播图样式 - 首页 */
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #home .box-title span {
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        /* 统计信息样式 - 首页 */
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* 行间距 */
+            padding: 10px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            /* 列间距 */
+        }
+
+        .stats-item {
+            flex: 1;
+            /* 每个 stats-item 平均分配宽度 */
+            background-color: #f8f8f8;
+            /* 浅灰色背景 */
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
+        }
+
+        .stats-label {
+            font-size: 14px;
+            color: #666;
+            /* 灰色文字 */
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stats-value {
+            font-size: 16px;
+            color: #333;
+            /* 深色文字 */
+            font-weight: bold;
+        }
+
+        /* 底部菜单样式 - 所有页面共用 */
+        .menu {
+            display: flex;
+            justify-content: space-around;
+            padding: 5px 0;
+            /* 调整上下内边距 */
+            padding-bottom: env(safe-area-inset-bottom);
+            background-color: #f8f8f8;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            /* 固定高度 */
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item {
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+            /* 调整文字大小 */
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            /* 调整图标大小 */
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .menu-item.active {
+            color: red;
+            /* 激活状态的图标和文字为红色 */
+        }
+
+        .menu-item:not(.active) {
+            color: #999;
+            /* 未激活状态的图标和文字为灰色 */
+        }
+
+        /*  数据页面 */
+        .grid-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            /* 添加底部边框 */
+        }
+
+        .grid-item {
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #3b3939;
+            /* 默认深灰色 */
+            position: relative;
+            padding: 10px 0;
+            /* 调整上下内边距 */
+        }
+
+        .grid-item.active {
+            color: red;
+            /* 激活状态的文字为红色 */
+        }
+
+        .grid-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background-color: red;
+            /* 红色横线 */
+        }
+
+        /* 隐藏样式 - 所有页面共用 */
+        .hidden {
+            display: none;
+        }
+
+        
+
+        /* 业务页面样式 - 业务页面 */
+        .business-container {
+            background-color: white;
+            /* 白色背景 */
+            margin: 0;
+            /* 上下左右外边距为0 */
+            padding: 0;
+            /* 内边距为0 */
+            display: flex;
+            /* 使用flex布局 */
+            height: 100%;
+            /* 高度为content的100% */
+            position: relative;
+            /* 确保布局正常 */
+            width: 100%;
+            /* 宽度为100% */
+        }
+
+        .business-container .gray-box {
+            background-color: #ddd;
+            /* 灰色背景 */
+            width: 60px;
+            /* 宽度 */
+            height: 900px;
+            /* 高度为整个页面 */
+            display: flex;
+            flex-direction: column;
+            /* 子元素垂直排列 */
+            align-items: center;
+            /* 水平居中 */
+            justify-content: flex-start;
+            /* 从顶部开始排列 */
+            
+        }
+
+        .business-container .gray-box .square-box {
+            width: 60px;
+            /* 正方形宽度 */
+            height: 60px;
+            /* 正方形高度 */
+            margin-bottom: 10px;
+            /* 下边距 */
+            display: flex;
+            justify-content: center;
+            /* 文字水平居中 */
+            align-items: center;
+            /* 文字垂直居中 */
+            font-size: 14px;
+            /* 文字大小 */
+            background-color: #ddd;
+            /* 默认与gray-box颜色一致 */
+            cursor: pointer;
+            /* 鼠标指针变为手型 */
+        }
+
+        .business-container .gray-box .square-box.active {
+            background-color: white;
+            /* 点击时变为白色 */
+        }
+
+        /* 右侧白色文本框样式 - 业务页面 */
+        .right-content {
+            flex: 1;
+            /* 占据剩余空间 */
+            background-color: white;
+            /* 白色背景 */
+            padding: 10px;
+            display: none;
+            /* 默认隐藏 */
+        }
+
+        .right-content.active {
+            display: block;
+            /* 显示 */
+        }
+
+        /* 9宫格样式 - 业务页面 */
+        .grid-9 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* 3列 */
+            gap: 10px;
+            /* 间距 */
+        }
+
+        .grid-9 .grid-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .grid-9 .grid-item i {
+            font-size: 24px;
+            /* 图标大小 */
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .grid-9 .grid-item span {
+            font-size: 12px;
+            /* 文字大小 */
+            color: #333;
+            /* 文字颜色 */
+        }
+
+        /* 分页指示器样式 - 首页 */
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .carousel-indicators .indicator {
+            width: 6px;
+            height: 6px;
+            background-color: #080808;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border 0.3s ease;
+            /* 添加过渡效果 */
+        }
+
+        .carousel-indicators .indicator.active {
+            background-color: transparent;
+            /* 空心 */
+            border: 1px solid #080808;
+        }
+
+        /* 审核页面样式 - 业务页面 */
+        .audit-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* 上下文本框之间的间距 */
+            padding: 10px;
+        }
+
+        .audit-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f8f8;
+            /* 浅灰色背景 */
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
+        }
+
+        .audit-text {
+            flex: 1;
+            /* 占据剩余空间 */
+            font-size: 14px;
+            color: #333;
+        }
+
+        .audit-text p {
+            margin: 5px 0;
+            /* 每行文字的间距 */
+        }
+
+        .audit-buttons {
+            display: flex;
+            flex-direction: column;
+            /* 按钮竖排排列 */
+            gap: 10px;
+            /* 按钮之间的间距 */
+        }
+
+        .audit-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .audit-button.approve {
+            background-color: #4caf50;
+            /* 绿色 */
+            color: white;
+        }
+
+        .audit-button.cancel {
+            background-color: #f44336;
+            /* 红色 */
+            color: white;
+        }
+
+        .audit-button:hover {
+            opacity: 0.9;
+            /* 鼠标悬停时按钮透明度变化 */
+        }
+
+        /* 全屏弹出页面样式 - 智慧小助手 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 90%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f7fa;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+        }
+
+        .overlay.open {
+            top: 0;
+            border-radius: 0;
+        }
+
+        /* 蓝色头部 */
+        .overlay .blue-header {
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .overlay .blue-header::before {
+            content: 'AI';
+            position: absolute;
+            top: 50%;
+            left: 80%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.15);
+            z-index: 1;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .overlay .blue-header::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 80%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .overlay .blue-header .subtitle {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 5px;
+            font-weight: 400;
+            
+        }
+
+        .overlay .back-button {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .overlay .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .overlay .close-zhbutton {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .overlay .close-zhbutton:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* 聊天窗口样式 */
+        .overlay .chat-container {
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            height: calc(100% - 160px);
+            background-color: #f5f7fa;
+            
+        }
+
+        /* 消息气泡样式 */
+        .overlay .message {
+            max-width: 75%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 用户消息气泡 */
+        .overlay .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            margin-left: 25%;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* 用户消息气泡小箭头 */
+        .overlay .message.user::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 0 8px 8px;
+            border-color: transparent transparent transparent #3a7bd5;
+            filter: drop-shadow(1px 0 1px rgba(0, 0, 0, 0.1));
+        }
+
+        /* 助手消息气泡 */
+        .overlay .message.assistant {
+            align-self: flex-start;
+            background-color: white;
+            color: #333;
+            margin-right: 25%;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 助手消息气泡小箭头 */
+        .overlay .message.assistant::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 8px 8px 0;
+            border-color: transparent white transparent transparent;
+            filter: drop-shadow(-1px 0 1px rgba(0, 0, 0, 0.1));
+        }
+
+        /* 时间戳样式 */
+        .overlay .message .timestamp {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 6px;
+            display: block;
+            text-align: right;
+        }
+
+        .overlay .message.assistant .timestamp {
+            color: #999;
+        }
+
+        /* 输入框区域样式 */
+        .overlay .question-box {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .overlay .question-box:focus-within {
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+        }
+
+        .overlay .question-box input {
+            flex: 1;
+            border: none;
+            background-color: transparent;
+            padding: 8px 12px;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+        }
+
+        .overlay .question-box input::placeholder {
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        /* 发送按钮样式 */
+        .overlay .question-box button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-left: 10px;
+            box-shadow: 0 2px 5px rgba(58, 123, 213, 0.3);
+        }
+
+        .overlay .question-box button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(58, 123, 213, 0.4);
+        }
+
+        .overlay .question-box button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(58, 123, 213, 0.3);
+        }
+
+        /* 滚动条样式 */
+        .overlay .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .overlay .chat-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .overlay .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .overlay .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 打开按钮样式 */
+        .open-chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .open-chat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(58, 123, 213, 0.4);
+        }
+
+        .open-chat-btn:active {
+            transform: translateY(0);
+        }
+
+        
+
+
+        /*模拟OSS页面样式*/
+        /* 滚动到顶部/底部时调整轨道边距 */
+        .oss-container::-webkit-scrollbar-track:vertical:start {
+            margin-top: 4px;
+        }
+
+        .oss-container::-webkit-scrollbar-track:vertical:end {
+            margin-bottom: 4px;
+        }
+
+        .oss-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--thumb-hover-start), var(--thumb-hover-end));
+            transform: scaleX(1.15);
+        }
+
+        /* 滚动时激活状态 */
+        .oss-container:not(:hover)::-webkit-scrollbar-thumb {
+            opacity: 0.9;
+            background: linear-gradient(45deg,
+                    color-mix(in srgb, var(--thumb-start) 80%, transparent),
+                    color-mix(in srgb, var(--thumb-end) 80%, transparent));
+        }
+
+        .oss-h1 {
+            
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            /* 使用弹性布局使元素水平排列 */
+            justify-content: space-between;
+            /* 在元素之间创建均匀的空格 */
+            margin: 0 auto;
+            /* 居中显示 */
+            padding: 10px;
+        }
+
+        .oss-h1 span {
+            margin: 0 10px;
+            /* 左右边距增加间距 */
+        }
+
+        .underline {
+            position: relative;
+            /* 为伪元素定位做准备 */
+        }
+
+        .underline::after {
+            content: "";
+            /* 必须有的伪元素内容 */
+            position: absolute;
+            /* 绝对定位 */
+            left: 0;
+            /* 从左边开始 */
+            bottom: -5px;
+            /* 在文字下方 */
+            width: 100%;
+            /* 与文字同宽 */
+            height: 2px;
+            /* 线的高度 */
+            background-color: red;
+            /* 红色横线 */
+        }
+
+
+
+        .oss-ip-input-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+
+        }
+
+        .oss-ip-input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .oss-ip-input-label {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .oss-ip-input-fields {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .oss-ip-input {
+            width: 22%;
+            max-width: 80px;
+            height: 22px;
+            text-align: center;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin: 0 3px;
+            font-weight: 500;
+            transition: border-color 0.3s;
+        }
+
+        .oss-ip-input:focus {
+            border-color: #ff3c00;
+            outline: none;
+        }
+
+        .oss-ip-dot {
+            font-size: 1.2rem;
+            color: #777;
+            margin: 0 2px;
+        }
+
+        .oss-query-btn {
+            padding: 8px 15px;
+            border-color: #ff3c00;
+            background-color: #ff3C00;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .oss-query-btn:active {
+            background-color: #ff3c00;
+            transform: scale(0.98);
+        }
+
+        .oss-result-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .oss-result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .oss-result-label {
+            font-weight: 600;
+            color: #555;
+            width: 80px;
+            font-size: 0.9rem;
+        }
+
+        .oss-result-value {
+            color: #333;
+            flex: 1;
+            min-width: calc(100% - 80px);
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .oss-user-count-link {
+            color: #ff3C00;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .oss-user-count-link::after {
+            content: "→";
+            margin-left: 5px;
+        }
+
+        .oss-user-table-container {
+            margin-top: 3px;
+            display: none;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background-color: white;
+            position: relative;
+        }
+
+        .oss-user-table {
+            width: 100%;
+            min-width: 300px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .oss-user-table th {
+            background-color: #ff3C00;
+            color: white;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .oss-user-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 1rem;
+            background-color: white;
+        }
+
+        .oss-user-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .oss-user-info {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 1rem;
+            border-left: 2px solid #ff3C00;
+            white-space: normal;
+        }
+
+        .oss-user-info div {
+            margin-bottom: 4px;
+        }
+
+        .oss-user-info strong {
+            color: #555;
+            min-width: 35px;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
+        .oss-loading {
+            text-align: center;
+            padding: 10px;
+            display: none;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .oss-loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 107, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #ff3C00;
+            animation: oss-spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .oss-no-more-data {
+            text-align: center;
+            padding: 10px;
+            color: #777;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        @keyframes oss-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* oss设置折叠按钮折叠局端信息为了下面的详情空间更大 */
+        .oss-coll-btn {
+            background-color: transparent;
+            /* 设置背景为透明 */
+            color: black;
+            /* 设置文字颜色为黑色 */
+            border: none;
+            /* 去掉边框 */
+            padding: 0px 20px 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            /* 去掉点击时的边框 */
+        }
+
+        /* 右上角设置页面的相关样式 */
+        /* 设置图标样式 */
+        .settings {
+            position: relative;
+            right: 15px;
+            top: 0px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 设置面板样式 - 初始隐藏 */
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
+            overflow: hidden; /* 禁用滚动 */
+            
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            z-index: 2;
+        }
+
+        /* 红色头部区域 */
+        .settings-header {
+            background-color: #e74c3c;
+            height: 120px;
+            width: 100%;
+            position: relative;
+            padding: 20px;
+            padding-top: 60px;
+            /* 为返回按钮留出空间 */
+        }
+
+        /* 头像圆圈 */
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* 工号样式 */
+        .employee-id {
+            color: white;
+            font-size: 18px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 15px;
+        }
+
+        /* 设置项列表 */
+        .settings-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .settings-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .settings-item:after {
+            content: ">";
+            position: absolute;
+            right: 20px;
+            color: #999;
+        }
+
+        /* 子面板样式 - 初始隐藏 */
+        .sub-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1001;
+            padding: 20px;
+            overflow: auto; 
+            
+        }
+
+        .sub-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 打卡页面所有样式添加phch前缀 */
+        .phch-container {
+            max-width: 100%;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 16px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+
+        .phch-h1 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .phch-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .phch-info-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .phch-info-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            align-self: center;
+        }
+
+        .phch-info-value {
+            font-weight: 500;
+            color: #1e293b;
+            align-self: center;
+            word-break: break-all;
+        }
+
+        #phch-locationValue {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        #phch-locationTime {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        #phch-currentTime {
+            color: #2563eb;
+        }
+
+        .phch-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 0.75rem 0;
+            background-color: #f8fafc;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            
+            max-width: 100%; /* 防止溢出 */
+            background-size: 16px 16px;
+        }
+
+        .phch-photo-section {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .phch-photo-placeholder {
+            width: 100%;
+            height: 180px;
+            margin: 0 auto;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .phch-photo-placeholder.active {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .phch-avatar {
+            display: none;
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .phch-avatar-head {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 0;
+            left: 20px;
+        }
+
+        .phch-avatar-body {
+            position: absolute;
+            width: 60px;
+            height: 50px;
+            background: #3b82f6;
+            border-radius: 15px;
+            bottom: 0;
+            left: 30px;
+        }
+
+        .phch-avatar-eye {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .phch-avatar-eye.left {
+            left: 35px;
+        }
+
+        .phch-avatar-eye.right {
+            right: 35px;
+        }
+
+        .phch-avatar-mouth {
+            position: absolute;
+            width: 24px;
+            height: 8px;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            bottom: 50px;
+            left: 48px;
+        }
+
+        .phch-button-group {
+            display: flex;
+            gap: 0.75rem;
+            margin: 0.75rem 0;
+        }
+
+        .phch-button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #phch-takePhoto {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        #phch-takePhoto:hover {
+            background-color: #2563eb;
+        }
+
+        #phch-retakePhoto {
+            background-color: #f1f5f9;
+            color: #64748b;
+            display: none;
+        }
+
+        #phch-retakePhoto:hover {
+            background-color: #e2e8f0;
+        }
+
+        #phch-submitBtn {
+            background-color: #10b981;
+            color: white;
+            width: 100%;
+        }
+
+        #phch-submitBtn:hover {
+            background-color: #059669;
+        }
+
+        .phch-status {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .phch-photo-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        .phch-placeholder-text {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .zjss {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .zjss-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .zjss-input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="approval" id="approval">
+            🔔
+            <div class="badge">2</div> <!-- 审核数量徽章 -->
+        </div>
+        <div class="search">
+            <i>🤖</i> <!-- 智慧小助手图标 -->
+            <span>智慧小助手 🔍</span>
+        </div>
+        <!-- 智慧小助手全屏弹出页面 -->
+        <div class="overlay" id="overlay">
+            <!-- 新增蓝色头部 -->
+            <div class="blue-header">
+                <div class="back-button">&#9776;</div>
+                <div class="close-zhbutton">&times;</div>
+                <div>
+                    <br>🤖智慧小助手
+                    <div class="subtitle">Hi，您好，BOSS操作，宽带维修…我都能帮您。</div>
+                </div>
+            </div>
+            <div class="chat-container" id="chat-container">
+                <!-- 聊天内容将动态插入到这里 -->
+            </div>
+            <div class="question-box">
+                <input type="text" id="question-input" placeholder="有问题，尽管问我！">
+                <button onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+
+
+
+        <div class="settings" id="shezhi">⚙️</div> <!-- 设置图标 -->
+    </div>
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <!-- 返回按钮 -->
+        <div class="back-btn" id="backBtn">←</div>
+
+        <div class="settings-header">
+            <div class="avatar"></div>
+            <span class="employee-id">工号: 12345</span>
+        </div>
+
+        <ul class="settings-list">
+            <li class="settings-item" id="firstSetting">📷入户服务打卡</li>
+            <li class="settings-item">🎮修改密码</li>
+            <li class="settings-item">📩工单预警设置</li>
+            <li class="settings-item">📶检查更新</li>
+            <li class="settings-item">📅清除缓存</li>
+            <li class="settings-item">📱注销</li>
+        </ul>
+    </div>
+
+    <!-- 子面板 -->
+    <div class="sub-panel" id="subPanel">
+        <div class="sub-panel-header">
+            <span class="close-btn" id="closeSubPanel">×</span>
+        </div>
+        <div class="sub-panel-content">
+            <div class="phch-container">
+                <h1 class="phch-h1">入户服务打卡</h1>
+
+                <div class="phch-card">
+                    <div class="phch-info-grid">
+                        <div class="phch-info-label">员工</div>
+                        <div class="phch-info-value" id="phch-employeeValue">李师傅 (500900)</div>
+
+                        <div class="phch-info-label">位置</div>
+                        <div>
+                            <div id="phch-locationValue">正在定位中...</div>
+                            <div id="phch-locationTime"></div>
+                        </div>
+
+                        <div class="phch-info-label">时间</div>
+                        <div class="phch-info-value" id="phch-currentTime"></div>
+                    </div>
+
+                    <select class="phch-select" id="phch-serviceType">
+                        <option value="">-- 选择服务类型 --</option>
+                        <option value="repair">设备维修</option>
+                        <option value="install">开户安装</option>
+                        <option value="inspect">营销推广</option>
+                        <option value="train">定期检查</option>
+                    </select>
+
+                    <div class="phch-photo-section">
+                        <div class="phch-photo-placeholder" id="phch-photoPlaceholder">
+                            <div class="phch-avatar" id="phch-avatar">
+                                <div class="phch-avatar-head"></div>
+                                <div class="phch-avatar-body"></div>
+                                <div class="phch-avatar-eye left"></div>
+                                <div class="phch-avatar-eye right"></div>
+                                <div class="phch-avatar-mouth"></div>
+                            </div>
+                            <div class="phch-placeholder-text" id="phch-placeholderText">点击下方按钮拍摄现场照片</div>
+                        </div>
+
+                        <div class="phch-button-group">
+                            <button class="phch-button" id="phch-takePhoto">拍照</button>
+                            <button class="phch-button" id="phch-retakePhoto">重拍</button>
+                        </div>
+
+                        <div class="phch-status" id="phch-photoStatus"></div>
+                        <div class="phch-photo-time" id="phch-photoTime"></div>
+                    </div>
+                </div>
+
+                <button class="phch-button" id="phch-submitBtn">提交打卡记录</button>
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <div class="content">
+        <div id="home" class="page">
+
+            <div class="box-title">
+                <i>📈</i> <!-- 图标 -->
+                <span>实时数据简报</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <div class="carousel">
+                    <div class="carousel-item">
+                        <div class="stats-container">
+                            <div class="stats-row">
+                                <div class="stats-item">
+                                    <span class="stats-label">本人新增</span>
+                                    <span class="stats-value">6户</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">网格新增</span>
+                                    <span class="stats-value">10户</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">本月累计</span>
+                                    <span class="stats-value">100户</span>
+                                </div>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stats-item">
+                                    <span class="stats-label">本人收入</span>
+                                    <span class="stats-value">10元</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">网格收入</span>
+                                    <span class="stats-value">200元</span>
+                                </div>
+                                <div class="stats-item">
+                                    <span class="stats-label">累计收入</span>
+                                    <span class="stats-value">300元</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第2页 - </p>
+                    </div>
+                    <div class="carousel-item">
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第3页 -</p>
+                    </div>
+                    <div class="carousel-item">
+                        <p>数据来源于自研报表，<br>轮播展示各维度数据概况<br> - 第4页 -</p>
+                    </div>
+                </div>
+                <div class="carousel-indicators">
+                    <div class="indicator active" onclick="goToPage(0)"></div>
+                    <div class="indicator" onclick="goToPage(1)"></div>
+                    <div class="indicator" onclick="goToPage(2)"></div>
+                    <div class="indicator" onclick="goToPage(3)"></div>
+                </div>
+            </div>
+
+            <div class="box-title">
+                <i>📝</i> <!-- 图标 -->
+                <span>工单任务</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <p>显示各类客服工单数量（此处不变）</p>
+            </div>
+
+            <div class="box-title">
+                <i>📌</i> <!-- 图标 -->
+                <span>常用菜单</span> <!-- 文字 -->
+            </div>
+            <div class="floating-box">
+                <p>提供快捷功能入口（此处不变）</p>
+            </div>
+        </div>
+        <div id="business" class="page hidden">
+            <!-- 业务页面的新增内容 -->
+            <div id="business" class="business-container hidden">
+                <div class="gray-box active">
+                    <div class="square-box active" onclick="toggleSquareBox(this, '固网')">固网</div> <!-- 第一个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '移网个人')">移网<br>个人</div>
+                    <!-- 第二个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '移网集团')">移网<br>集团</div>
+                    <!-- 第三个正方形文本框 -->
+                    <div class="square-box" onclick="toggleSquareBox(this, '审核')">审核</div> <!-- 第四个正方形文本框 -->
+                </div>
+                <!-- 右侧内容区域 -->
+                <div id="right-content-固网" class="right-content active">
+                    
+                    <div class="zjss">
+                        <input type="text" class="zjss-input" placeholder="🔍客户搜索...">
+                    </div>
+                    <div class="grid-9">
+                        <div class="grid-item"><i>📁</i><span>固功1</span></div>
+                        <div class="grid-item"><i>📊</i><span>固功2</span></div>
+                        <div class="grid-item"><i>📅</i><span>固功3</span></div>
+                        <div class="grid-item"><i>📝</i><span>固功4</span></div>
+                        <div class="grid-item"><i>📂</i><span>固功5</span></div>
+                        <div class="grid-item"><i>📈</i><span>固功6</span></div>
+                        <div class="grid-item"><i>📌</i><span>固功7</span></div>
+                        <div class="grid-item"><i>📎</i><span>固功8</span></div>
+                        <div class="grid-item"><i>📁</i><span>固功1</span></div>
+                        <div class="grid-item"><i>📊</i><span>固功2</span></div>
+                        <div class="grid-item"><i>📅</i><span>固功3</span></div>
+                        <div class="grid-item"><i>📝</i><span>固功4</span></div>
+                        <div class="grid-item"><i>📂</i><span>固功5</span></div>
+                        <div class="grid-item"><i>📈</i><span>固功6</span></div>
+                        <div class="grid-item"><i>📌</i><span>固功7</span></div>
+                        <div class="grid-item"><i>📎</i><span>固功8</span></div>
+                        <div class="grid-item"><i>✅</i><span>审核？</span></div>
+                    </div>
+                    <div class="dashed-box">
+                        <p class="zhushi-text">此部分不变</p>
+                    </div>
+                </div>
+                
+                <div id="right-content-移网个人" class="right-content">
+                    
+                    <div class="grid-9">
+                        <div class="grid-item"><i>📱</i><span>移功1</span></div>
+                        <div class="grid-item"><i>📶</i><span>移功2</span></div>
+                        <div class="grid-item"><i>📞</i><span>移功3</span></div>
+                        <div class="grid-item"><i>📩</i><span>移功4</span></div>
+                        <div class="grid-item"><i>📷</i><span>移功5</span></div>
+                        <div class="grid-item"><i>🎮</i><span>移功6</span></div>
+                        <div class="grid-item"><i>📅</i><span>移功7</span></div>
+                        <div class="grid-item"><i>📂</i><span>移功8</span></div>
+                        <div class="grid-item"><i>📊</i><span>移功9</span></div>
+                    </div>
+                    <div class="dashed-box">
+                        <p class="zhushi-text">此部分不变</p>
+                    </div>
+                </div>
+                <div id="right-content-移网集团" class="right-content">
+                    
+                    <div class="grid-9">
+                        <div class="grid-item"><i>🏢</i><span>集团成员激活</span></div>
+                        <div class="grid-item"><i>👥</i><span>集团功能2</span></div>
+                        <div class="grid-item"><i>📊</i><span>集团功能3</span></div>
+                        <div class="grid-item"><i>📅</i><span>集团功能4</span></div>
+                    </div>
+                    <div class="dashed-box">
+                        
+                        <p class="zhushi-text">此部分如给代理商使用集团成员激活要特别注意权限设置</p>
+                    </div>
+                </div>
+                <div id="right-content-审核" class="right-content">
+                    <div class="audit-container">
+                        <div class="audit-box">
+                            <div class="audit-text">
+                                <p>客户编码：100333333333</p>
+                                <p>审核项目：订购产品</p>
+                                <p>审核额度：15天</p>
+                                <p>提交人：张三</p>
+                            </div>
+                            <div class="audit-buttons">
+                                <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
+                                <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
+                            </div>
+                        </div>
+                        <div class="audit-box">
+                            <div class="audit-text">
+                                <p>客户编码：102222222222</p>
+                                <p>审核项目：特殊退费</p>
+                                <p>审核额度：500元</p>
+                                <p>提交人：李四</p>
+                            </div>
+                            <div class="audit-buttons">
+                                <button class="audit-button approve" onclick="handleAuditAction(this)">通过</button>
+                                <button class="audit-button cancel" onclick="handleAuditAction(this)">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="oss" class="page hidden">
+            <h1 class="oss-h1"><span>局端新增</span><span>局端更换</span>
+                <span class="underline">局端查询</span>
+            </h1>
+            <div class="oss-container">
+
+
+                <div><button class="oss-coll-btn" id="osscollBtn">&#8722;</button>
+                    <div class="oss-ip-input-container" id="ossInputContainer">
+
+                        <div class="oss-ip-input-header">
+                            <span class="oss-ip-input-label">请输入IP地址：</span>
+                            <button class="oss-query-btn" id="ossQueryBtn">查询</button>
+                        </div>
+                        <div class="oss-ip-input-fields">
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                            <span class="oss-ip-dot">.</span>
+                            <input type="number" class="oss-ip-input" min="0" max="255" placeholder=""
+                                inputmode="numeric">
+                        </div>
+
+                        <div id="ossBasicInfoContainer" style="display: none;">
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">设备名称：</span>
+                                <span class="oss-result-value" id="ossDeviceName">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">MAC地址：</span>
+                                <span class="oss-result-value" id="ossMacAddress">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线时长：</span>
+                                <span class="oss-result-value" id="ossOnlineTime">-</span>
+                            </div>
+                            <div class="oss-result-item">
+                                <span class="oss-result-label">在线用户：</span>
+                                <span class="oss-result-value">
+                                    <a href="javascript:void(0);" class="oss-user-count-link"
+                                        id="ossUserCountLink">查看全部<span id="ossUserCount">0</span>户</a>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="oss-user-table-container" id="ossUserTableContainer">
+                    <table class="oss-user-table">
+                        <thead>
+                            <tr>
+                                <th>MAC地址</th>
+                                <th>衰减</th>
+                                <th>上/下Phy速率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ossUserTableBody">
+                            <!-- 用户数据将通过JavaScript动态添加 -->
+                        </tbody>
+                    </table>
+                    <div class="oss-loading" id="ossLoadingMore">
+                        <span class="oss-loader"></span>正在加载更多数据...
+                    </div>
+                    <div class="oss-no-more-data" id="ossNoMoreData">
+                        已加载全部数据
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div id="workorder" class="page hidden">
+            <p>客服工单页面功能不变</p>
+        </div>
+        <div id="grid" class="page hidden">
+            <div class="grid-container">
+                <div class="grid-item active" onclick="loadGridContent('realtime.html')">业绩追踪</div>
+                <div class="grid-item" onclick="loadGridContent('marketing.html')">营销向导</div>
+                <div class="grid-item" onclick="loadGridContent('trend.html')">智能推荐</div>
+                <div class="grid-item" onclick="loadGridContent('custom.html')">智能魔方</div>
+            </div>
+            <div id="grid-content">
+                <iframe id="grid-iframe" src="" frameborder="0" style="width: 100%; height: 700px;"></iframe>
+            </div>
+        </div>
+
+       
+    <div class="menu">
+        <div class="menu-item active" onclick="showPage('home')">
+            <i>🏠</i>
+            <span>首页</span>
+        </div>
+        <div class="menu-item" onclick="showPage('business')">
+            <i>💼</i>
+            <span>业务</span>
+        </div>
+        <div class="menu-item" onclick="showPage('oss')">
+            <i>📊</i>
+            <span>OSS</span>
+        </div>
+        <div class="menu-item" onclick="showPage('workorder')">
+            <i>📝</i>
+            <span>工单</span>
+        </div>
+        <div class="menu-item" onclick="showPage('grid')">
+            <i>🔍</i>
+            <span>数据</span>
+        </div>
+    </div>
+
+
+
+    <script>
+        // 切换页面显示的函数
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.remove('hidden'); // 显示当前页面
+                } else {
+                    page.classList.add('hidden'); // 隐藏其他页面
+                }
+            });
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active'); // 移除所有active类
+            });
+            const activeItem = document.querySelector(`.menu-item[onclick*="${pageId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active'); // 为当前点击的项添加active类
+            }
+
+            // 如果切换到审核页面，重置所有 audit-box 的显示状态
+            if (pageId === 'business') {
+                const auditBoxes = document.querySelectorAll('.audit-box');
+                auditBoxes.forEach(box => {
+                    box.style.display = 'flex'; // 显示所有 audit-box
+                });
+            }
+        }
+
+        // 切换数据内容的函数
+
+        function showGridContent(contentId) {
+            const gridItems = document.querySelectorAll('.grid-item');
+            gridItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`.grid-item[onclick*="${contentId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+            const gridContentText = document.getElementById('grid-content-text');
+            const marketingReports = document.getElementById('marketing-reports');
+           
+            document.getElementById('grid-content').classList.remove('hidden');
+        }
+
+        
+
+
+        // 显示智慧小助手全屏弹出页面
+        document.querySelector('.search').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block'; // 显示智慧小助手全屏弹出页面
+            setTimeout(() => {
+                overlay.classList.add('open'); // 添加展开动画
+            }, 10); // 延迟 10ms 确保样式生效
+        });
+
+        // 点击 back-button 仅隐藏智慧小助手全屏弹出页面
+        document.querySelector('.back-button').addEventListener('click', () => {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.remove('open'); // 关闭抽屉效果
+            setTimeout(() => {
+                overlay.style.display = 'none'; // 隐藏智慧小助手全屏弹出页面
+            }, 300); // 等待动画完成后再隐藏
+        });
+
+        // 点击close-zhbutton 关闭聊天页面
+        document.querySelector('.close-zhbutton').addEventListener('click', () => {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.innerHTML = ''; // 清空聊天内容
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none'; // 直接关闭全屏弹出页面
+        });
+
+
+        // 发送消息并显示在聊天区域
+        function sendMessage() {
+            const input = document.getElementById('question-input');
+            const messageText = input.value.trim();
+            if (messageText === '') return;
+
+            // 添加用户消息
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('message', 'user');
+            userMessage.innerHTML = `
+                <div>${messageText}</div>
+                <div class="timestamp">${new Date().toLocaleTimeString()}</div>
+            `;
+            document.getElementById('chat-container').appendChild(userMessage);
+
+            // 清空输入框
+            input.value = '';
+
+            // 自动回复
+            setTimeout(() => {
+                const assistantMessage = document.createElement('div');
+                assistantMessage.classList.add('message', 'assistant');
+                assistantMessage.innerHTML = `
+                    <div>这只是个模拟前端呀，我咋回复？</div>
+                    <div class="timestamp">${new Date().toLocaleTimeString()}</div>
+                `;
+                document.getElementById('chat-container').appendChild(assistantMessage);
+
+                // 滚动到底部
+                document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
+            }, 500);
+        }
+        // 监听全屏弹出页面的触摸事件
+        let startY = 0; // 记录触摸起始位置
+        const overlay = document.getElementById('overlay');
+
+        overlay.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY; // 记录起始 Y 坐标
+        });
+
+        overlay.addEventListener('touchmove', (e) => {
+            const currentY = e.touches[0].clientY; // 获取当前 Y 坐标
+            const deltaY = currentY - startY; // 计算滑动距离
+
+            if (deltaY > 0) { // 向下滑动
+                overlay.style.top = `${Math.min(90 + (deltaY / window.innerHeight * 100), 90)}%`; // 限制滑动范围
+            }
+        });
+
+        overlay.addEventListener('touchend', (e) => {
+            const currentY = e.changedTouches[0].clientY; // 获取结束 Y 坐标
+            const deltaY = currentY - startY; // 计算滑动距离
+
+            if (deltaY > 50) { // 如果向下滑动超过 50px
+                closeOverlay(); // 关闭页面
+            } else {
+                overlay.style.top = '0'; // 否则回到完全展开状态
+            }
+        });
+
+
+
+
+
+        // 切换square-box的背景颜色并显示右侧内容
+        function toggleSquareBox(element, contentId) {
+            const squareBoxes = document.querySelectorAll('.square-box');
+            squareBoxes.forEach(box => {
+                box.classList.remove('active'); // 移除所有active类
+            });
+            element.classList.add('active'); // 为当前点击的项添加active类
+
+            const rightContents = document.querySelectorAll('.right-content');
+            rightContents.forEach(content => {
+                content.classList.remove('active'); // 隐藏所有右侧内容
+            });
+            const activeContent = document.getElementById(`right-content-${contentId}`);
+            if (activeContent) {
+                activeContent.classList.add('active'); // 显示对应的右侧内容
+            }
+        }
+
+        // 轮播图翻页功能
+        function goToPage(pageIndex) {
+            const carousel = document.querySelector('.carousel');
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            const width = carousel.scrollWidth / indicators.length;
+            carousel.scrollTo({
+                left: pageIndex * width,
+                behavior: 'smooth'
+            });
+            updateIndicators(pageIndex); // 更新小圆点状态
+        }
+
+        // 更新小圆点状态
+        function updateIndicators(activeIndex) {
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === activeIndex) {
+                    indicator.classList.add('active'); // 当前页小圆点变为空心
+                } else {
+                    indicator.classList.remove('active'); // 其他小圆点变为实心
+                }
+            });
+        }
+
+        // 监听轮播图的滑动事件
+        document.querySelector('.carousel').addEventListener('scroll', () => {
+            const carousel = document.querySelector('.carousel');
+            const indicators = document.querySelectorAll('.carousel-indicators .indicator');
+            const scrollLeft = carousel.scrollLeft;
+            const width = carousel.scrollWidth / indicators.length;
+            const activeIndex = Math.round(scrollLeft / width); // 计算当前页索引
+            updateIndicators(activeIndex); // 更新小圆点状态
+        });
+
+
+        // 处理审核按钮点击事件
+        function handleAuditAction(button) {
+            const auditBox = button.closest('.audit-box');
+            auditBox.style.display = 'none'; // 隐藏当前 audit-box
+
+            // 减少徽章数量
+            const currentCount = parseInt(badgeElement.textContent) || 0;
+            if (currentCount > 0) {
+                updateBadgeCount(currentCount - 1);
+            }
+        }
+
+        // 初始化轮播图
+        document.addEventListener('DOMContentLoaded', () => {
+            goToPage(0); // 默认显示第一页
+        });
+
+        // 点击“待审核”跳转到审核页面
+        document.getElementById('approval').addEventListener('click', () => {
+            showPage('business'); // 跳转到业务页面
+            toggleSquareBox(document.querySelector('.square-box[onclick*="审核"]'), '审核'); // 激活审核页面
+        });
+
+        // 模拟OSS页面
+        document.addEventListener('DOMContentLoaded', function () {
+            const ossQueryBtn = document.getElementById('ossQueryBtn');
+            const ossBasicInfoContainer = document.getElementById('ossBasicInfoContainer');
+            const ossDeviceName = document.getElementById('ossDeviceName');
+            const ossMacAddress = document.getElementById('ossMacAddress');
+            const ossOnlineTime = document.getElementById('ossOnlineTime');
+            const ossUserCount = document.getElementById('ossUserCount');
+            const ossUserCountLink = document.getElementById('ossUserCountLink');
+            const ossUserTableContainer = document.getElementById('ossUserTableContainer');
+            const ossUserTableBody = document.getElementById('ossUserTableBody');
+            const ossLoadingMore = document.getElementById('ossLoadingMore');
+            const ossNoMoreData = document.getElementById('ossNoMoreData');
+
+            // 模拟数据 - 20户
+            const ossMockData = {
+                deviceName: '滨海宿舍二期4#2门',
+                macAddress: '9C-92-98-99-1E-1E',
+                onlineTime: '100天05小时04分01秒',
+                userCount: 20,
+                users: Array(20).fill().map((_, i) => ({
+                    mac: '00999F1AAA' + (i + 1).toString().padStart(2, '0'),
+                    attenuation: (40 + i % 5) + 'dB',
+                    phySpeed: '224/246 Mbps',
+                    code: '123456789' + (i + 1).toString().padStart(3, '0'),
+                    name: ['张', '李', '王', '刘', '陈'][i % 5] + ['三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'][i % 10],
+                    address: `某某市实验区滨江道花园小区${i + 1}-${i + 1}-${i + 1}`
+                }))
+            };
+
+            let ossCurrentIndex = 0;
+            const ossBatchSize = 4; // 每次加载4条
+            let ossIsLoading = false;
+            let ossAllDataLoaded = false;
+
+            // 查询按钮点击事件
+            ossQueryBtn.addEventListener('click', function () {
+                // 填充模拟数据
+                ossDeviceName.textContent = ossMockData.deviceName;
+                ossMacAddress.textContent = ossMockData.macAddress;
+                ossOnlineTime.textContent = ossMockData.onlineTime;
+                ossUserCount.textContent = ossMockData.userCount;
+
+                // 显示基本信息
+                ossBasicInfoContainer.style.display = 'block';
+
+                // 隐藏用户表格
+                ossUserTableContainer.style.display = 'none';
+
+                // 重置用户表格
+                ossUserTableBody.innerHTML = '';
+                ossCurrentIndex = 0;
+                ossAllDataLoaded = false;
+                ossNoMoreData.style.display = 'none';
+            });
+
+            // 加载用户数据函数
+            function ossLoadMoreUsers() {
+                if (ossIsLoading || ossAllDataLoaded) return;
+
+                ossIsLoading = true;
+                ossLoadingMore.style.display = 'block';
+
+                // 模拟网络延迟
+                setTimeout(function () {
+                    const remainingUsers = ossMockData.users.slice(ossCurrentIndex, ossCurrentIndex + ossBatchSize);
+                    ossCurrentIndex += remainingUsers.length;
+
+                    remainingUsers.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.className = 'oss-user-row';
+                        row.innerHTML = `
+                            <td>${user.mac}</td>
+                            <td>${user.attenuation}</td>
+                            <td>${user.phySpeed}</td>
+                        `;
+
+                        const infoRow = document.createElement('tr');
+                        infoRow.className = 'oss-user-info-row';
+                        infoRow.innerHTML = `
+                            <td colspan="3">
+                                <div class="oss-user-info">
+                                    <div><strong>编码：</strong>${user.code}</div>
+                                    <div><strong>姓名：</strong>${user.name}</div>
+                                    <div><strong>地址：</strong>${user.address}</div>
+                                </div>
+                            </td>
+                        `;
+
+                        ossUserTableBody.appendChild(row);
+                        ossUserTableBody.appendChild(infoRow);
+
+                        // 添加点击事件来显示/隐藏详细信息
+                        row.addEventListener('click', function () {
+                            const infoDiv = infoRow.querySelector('.oss-user-info');
+                            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
+                        });
+                    });
+
+                    // 检查是否已加载全部数据
+                    if (ossCurrentIndex >= ossMockData.users.length) {
+                        ossAllDataLoaded = true;
+                        ossNoMoreData.style.display = 'block';
+                    }
+
+                    ossLoadingMore.style.display = 'none';
+                    ossIsLoading = false;
+                }, 800); // 0.8秒延迟模拟网络请求
+            }
+
+            // 在线用户点击事件
+            ossUserCountLink.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // 显示/隐藏用户表格
+                if (ossUserTableContainer.style.display === 'none') {
+                    ossUserTableContainer.style.display = 'block';
+
+                    // 如果表格是空的，加载第一批数据
+                    if (ossUserTableBody.children.length === 0) {
+                        ossLoadMoreUsers();
+                    }
+                } else {
+                    ossUserTableContainer.style.display = 'none';
+                }
+            });
+
+            // 滚动加载更多
+            ossUserTableContainer.addEventListener('scroll', function () {
+                if (ossIsLoading || ossAllDataLoaded) return;
+
+                const { scrollTop, scrollHeight, clientHeight } = ossUserTableContainer;
+
+                // 当滚动到接近底部时加载更多
+                if (scrollTop + clientHeight >= scrollHeight - 50) {
+                    ossLoadMoreUsers();
+                }
+            });
+        });
+
+        // OSS折叠按钮相关事件
+        // 获取按钮和内容容器
+        const button = document.getElementById('osscollBtn');
+        const container = document.getElementById('ossInputContainer');
+
+        // 定义一个标志变量，用于记录内容是否展开
+        let isCollapsed = false; // 初始状态为展开
+
+        // 添加点击事件监听器
+        button.addEventListener('click', () => {
+            if (isCollapsed) {
+                // 如果内容是收起的，展开所有内容块
+                container.style.display = 'block';
+                button.innerHTML = '&#8722;'; // 更改按钮图标为减号
+            } else {
+                // 如果内容是展开的，收起所有内容块
+                container.style.display = 'none';
+                button.innerHTML = '&#9776;'; // 更改按钮图标为汉堡菜单
+            }
+            // 切换标志变量的值
+            isCollapsed = !isCollapsed;
+        });
+
+        // 设置页面相关信息-获取DOM元素
+        const settingsBtn = document.getElementById('shezhi');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const backBtn = document.getElementById('backBtn');
+        const firstSetting = document.getElementById('firstSetting');
+        const subPanel = document.getElementById('subPanel');
+        const closeSubPanel = document.getElementById('closeSubPanel');
+
+        // 点击设置图标显示全屏设置面板
+        settingsBtn.addEventListener('click', function () {
+            settingsPanel.style.display = 'block';
+            
+        });
+
+        // 点击返回按钮隐藏设置面板
+        backBtn.addEventListener('click', function () {
+            settingsPanel.style.display = 'none';
+            document.body.style.overflow = ''; // 恢复滚动
+        });
+
+        // 点击第一行设置项显示子面板
+        firstSetting.addEventListener('click', function () {
+            subPanel.style.display = 'block';
+        });
+
+        // 点击关闭按钮隐藏子面板
+        closeSubPanel.addEventListener('click', function () {
+            subPanel.style.display = 'none';
+        });
+
+        // 点击设置面板外部区域关闭面板
+        window.addEventListener('click', function (event) {
+            if (event.target === settingsPanel) {
+                settingsPanel.style.display = 'none';
+                document.body.style.overflow = ''; // 恢复滚动
+            }
+        });
+
+
+
+        // 使用IIFE封装所有代码，避免全局污染
+        (function () {
+            // 当前时间显示（实时更新）
+            function updateCurrentTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                document.getElementById('phch-currentTime').textContent = timeStr;
+            }
+            setInterval(updateCurrentTime, 1000);
+            updateCurrentTime();
+
+           // 将模拟定位逻辑封装到一个函数中
+function simulateLocation() {
+    const locations = [
+        "和平区光华路8号15楼",
+        "光华区某大街15号3单元",
+        "光华区金融大街1号B座"
+    ];
+    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+
+    // 记录定位时间（固定不变）
+    const now = new Date();
+    const locationTimeStr = now.toLocaleTimeString('zh-CN', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    document.getElementById('phch-locationValue').textContent = randomLocation;
+    document.getElementById('phch-locationTime').textContent = `定位时间: ${locationTimeStr}`;
+}
+
+// 在用户点击进入打卡页面时调用模拟定位函数
+document.getElementById('firstSetting').addEventListener('click', function () {
+    subPanel.style.display = 'block';
+    // 调用模拟定位函数
+    setTimeout(simulateLocation, 3000); // 模拟3秒的延迟
+});
+
+            // 拍照功能
+            const phchPhotoPlaceholder = document.getElementById('phch-photoPlaceholder');
+            const phchAvatar = document.getElementById('phch-avatar');
+            const phchPlaceholderText = document.getElementById('phch-placeholderText');
+            const phchTakePhotoBtn = document.getElementById('phch-takePhoto');
+            const phchRetakePhotoBtn = document.getElementById('phch-retakePhoto');
+            const phchPhotoStatus = document.getElementById('phch-photoStatus');
+            const phchPhotoTime = document.getElementById('phch-photoTime');
+
+            phchTakePhotoBtn.addEventListener('click', function () {
+                // 显示几何头像
+                phchAvatar.style.display = 'block';
+                phchPlaceholderText.style.display = 'none';
+                phchPhotoPlaceholder.classList.add('active');
+
+                // 更新状态
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                phchPhotoStatus.textContent = "已拍摄现场照片";
+                phchPhotoTime.textContent = "拍摄时间: " + timeStr;
+
+                // 切换按钮状态
+                phchTakePhotoBtn.style.display = 'none';
+                phchRetakePhotoBtn.style.display = 'block';
+
+                // 随机改变头像颜色
+                const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                document.querySelector('.phch-avatar-head').style.background = randomColor;
+                document.querySelector('.phch-avatar-body').style.background = randomColor;
+
+                // 添加拍照动画
+                phchAvatar.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    phchAvatar.style.transform = 'scale(1)';
+                }, 300);
+            });
+
+            phchRetakePhotoBtn.addEventListener('click', function () {
+                // 重置拍照状态
+                phchTakePhotoBtn.style.display = 'block';
+                phchRetakePhotoBtn.style.display = 'none';
+                phchPhotoStatus.textContent = "";
+                phchPhotoTime.textContent = "";
+
+                // 隐藏头像显示提示文字
+                phchAvatar.style.display = 'none';
+                phchPlaceholderText.style.display = 'block';
+                phchPhotoPlaceholder.classList.remove('active');
+            });
+
+            // 提交功能
+            document.getElementById('phch-submitBtn').addEventListener('click', function () {
+                const serviceType = document.getElementById('phch-serviceType').value;
+                if (!serviceType) {
+                    alert('请选择服务类型');
+                    return;
+                }
+
+                if (!phchPhotoPlaceholder.classList.contains('active')) {
+                    alert('请先拍摄现场照片');
+                    return;
+                }
+
+                const employee = document.getElementById('phch-employeeValue').textContent;
+                const location = document.getElementById('phch-locationValue').textContent;
+                const locationTime = document.getElementById('phch-locationTime').textContent;
+                const currentTime = document.getElementById('phch-currentTime').textContent;
+                const photoTimeStr = phchPhotoTime.textContent.replace("拍摄时间: ", "");
+                const serviceText = document.getElementById('phch-serviceType').options[document.getElementById('phch-serviceType').selectedIndex].text;
+
+                alert(`打卡成功！\n\n${employee}\n服务类型: ${serviceText}\n服务地点: ${location}\n（入户）${locationTime}\n（服务）拍照时间: ${photoTimeStr}\n（结束）打卡时间: ${currentTime}`);
+            });
+        })();
+
+
+        // 动态计算设备底部圆角
+        function setSafeAreaPadding() {
+            const bottomPadding = window.innerHeight - document.documentElement.clientHeight;
+            if (bottomPadding > 0) {
+                document.body.style.paddingBottom = bottomPadding + "px";
+            } else {
+                // 默认值（如手势导航条高度）
+                document.body.style.paddingBottom = "48px";
+            }
+        }
+
+        // 初始化 + 监听横竖屏变化
+        window.addEventListener("resize", setSafeAreaPadding);
+        setSafeAreaPadding();
+
+        // 初始化审核数量徽章
+        let initialBadgeCount = 2;
+        const badgeElement = document.querySelector('.badge');
+
+        // 更新徽章数量
+        function updateBadgeCount(count) {
+            badgeElement.textContent = count > 0 ? count : '';
+            badgeElement.style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        // 点击审核按钮时减少徽章数量
+        function handleAuditAction(button) {
+            const auditBox = button.closest('.audit-box');
+            auditBox.style.display = 'none'; // 隐藏当前 audit-box
+
+            // 减少徽章数量
+            const currentCount = parseInt(badgeElement.textContent) || 0;
+            if (currentCount > 0) {
+                updateBadgeCount(currentCount - 1);
+            }
+        }
+
+        // 点击业务菜单时重置徽章数量
+        document.querySelector('.menu-item[onclick*="business"]').addEventListener('click', () => {
+            updateBadgeCount(initialBadgeCount);
+        });
+
+        // 初始化徽章数量
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBadgeCount(initialBadgeCount);
+        });
+
+        // 加载数据内容到iframe
+        function loadGridContent(fileName) {
+            const iframe = document.getElementById('grid-iframe');
+            iframe.src = fileName;
+
+            // 更新激活状态
+            const gridItems = document.querySelectorAll('.grid-item');
+            gridItems.forEach(item => item.classList.remove('active'));
+            const activeItem = document.querySelector(`.grid-item[onclick*="${fileName}"]`);
+            if (activeItem) activeItem.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

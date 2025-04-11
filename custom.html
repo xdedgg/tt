@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智能魔方</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 10px 0;
+        }
+        h2 {
+            font-size: 1.3rem;
+            margin: 15px 0 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 100%;
+        }
+        .fields-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .fields-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .field {
+            background-color: #e0e0e0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+            touch-action: none;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        .field:active {
+            transform: scale(1.05);
+        }
+        .drop-zones {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .drop-zone {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 60px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .drop-zone-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .dropped-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 30px;
+        }
+        .dropped-field {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .remove-btn {
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn:active {
+            background-color: #45a049;
+            transform: scale(0.98);
+        }
+        .pivot-container {
+            display: none;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .pivot-description {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .pivot-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            display: block;
+        }
+        .pivot-table th, .pivot-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        .pivot-table th {
+            background-color: #f2f2f2;
+            font-weight: normal;
+        }
+        .empty-placeholder {
+            color: #999;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        /* 触摸反馈 */
+        .touch-feedback {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+       
+        
+        <div class="fields-panel">
+            <div class="drop-zone-title">可用字段</div>
+            <div class="fields-container" id="available-fields">
+                <div class="field" data-field="region">渠道</div>
+                <div class="field" data-field="product">产品</div>
+                <div class="field" data-field="category">类别</div>
+                <div class="field" data-field="sales">销售额</div>
+                <div class="field" data-field="quantity">数量</div>
+                <div class="field" data-field="year">年份</div>
+                <div class="field" data-field="month">月份</div>
+            </div>
+        </div>
+        
+        <div class="drop-zones">
+            <div class="drop-zone" id="row-fields">
+                <div class="drop-zone-title">行区域</div>
+                <div class="dropped-fields">
+                    <div class="empty-placeholder">拖拽字段到此处</div>
+                </div>
+            </div>
+            
+            <div class="drop-zone" id="column-fields">
+                <div class="drop-zone-title">列区域</div>
+                <div class="dropped-fields">
+                    <div class="empty-placeholder">拖拽字段到此处</div>
+                </div>
+            </div>
+            
+            <div class="drop-zone" id="value-fields">
+                <div class="drop-zone-title">值区域</div>
+                <div class="dropped-fields">
+                    <div class="empty-placeholder">拖拽字段到此处</div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="generate-btn" class="btn">生成数据透视表</button>
+        
+        <div id="pivot-container" class="pivot-container">
+            <h2>数据透视表结果</h2>
+            <div id="pivot-description" class="pivot-description"></div>
+            <div style="overflow-x: auto;">
+                <table id="pivot-table" class="pivot-table">
+                    <!-- 透视表将在这里生成 -->
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="touch-feedback" id="touch-feedback"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fields = document.querySelectorAll('.field');
+            const rowZone = document.getElementById('row-fields').querySelector('.dropped-fields');
+            const columnZone = document.getElementById('column-fields').querySelector('.dropped-fields');
+            const valueZone = document.getElementById('value-fields').querySelector('.dropped-fields');
+            const generateBtn = document.getElementById('generate-btn');
+            const pivotContainer = document.getElementById('pivot-container');
+            const pivotTable = document.getElementById('pivot-table');
+            const pivotDescription = document.getElementById('pivot-description');
+            const touchFeedback = document.getElementById('touch-feedback');
+            
+            let draggedItem = null;
+            let currentDropZone = null;
+            let startX, startY;
+            
+            // 为字段添加触摸事件
+            fields.forEach(field => {
+                field.addEventListener('touchstart', handleTouchStart, { passive: false });
+                field.addEventListener('mousedown', handleMouseStart);
+            });
+            
+            // 为放置区域添加事件
+            [rowZone, columnZone, valueZone].forEach(zone => {
+                zone.addEventListener('touchmove', handleTouchMove, { passive: false });
+                zone.addEventListener('touchend', handleTouchEnd);
+                zone.addEventListener('mousemove', handleMouseMove);
+                zone.addEventListener('mouseup', handleMouseEnd);
+                zone.addEventListener('mouseleave', handleMouseEnd);
+            });
+            
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseEnd);
+            
+            // 触摸开始处理
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startDrag(e.target, touch.clientX, touch.clientY);
+                
+                // 显示触摸反馈
+                touchFeedback.style.display = 'block';
+                touchFeedback.style.left = touch.clientX + 'px';
+                touchFeedback.style.top = touch.clientY + 'px';
+            }
+            
+            // 鼠标开始处理
+            function handleMouseStart(e) {
+                startDrag(e.target, e.clientX, e.clientY);
+            }
+            
+            // 开始拖拽
+            function startDrag(item, clientX, clientY) {
+                draggedItem = item;
+                startX = clientX;
+                startY = clientY;
+                
+                // 隐藏原始元素
+                item.style.opacity = '0.4';
+                
+                // 创建克隆元素用于拖拽反馈
+                const clone = item.cloneNode(true);
+                clone.id = 'dragging-clone';
+                clone.style.position = 'fixed';
+                clone.style.left = clientX + 'px';
+                clone.style.top = clientY + 'px';
+                clone.style.zIndex = '1000';
+                clone.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                clone.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+                document.body.appendChild(clone);
+            }
+            
+            // 触摸移动处理
+            function handleTouchMove(e) {
+                if (!draggedItem) return;
+                e.preventDefault();
+                
+                const touch = e.touches[0];
+                updateDragPosition(touch.clientX, touch.clientY);
+                updateDropZone(touch.clientX, touch.clientY);
+                
+                // 更新触摸反馈位置
+                touchFeedback.style.left = touch.clientX + 'px';
+                touchFeedback.style.top = touch.clientY + 'px';
+            }
+            
+            // 鼠标移动处理
+            function handleMouseMove(e) {
+                if (!draggedItem) return;
+                updateDragPosition(e.clientX, e.clientY);
+                updateDropZone(e.clientX, e.clientY);
+            }
+            
+            // 更新拖拽位置
+            function updateDragPosition(clientX, clientY) {
+                const clone = document.getElementById('dragging-clone');
+                if (clone) {
+                    clone.style.left = clientX + 'px';
+                    clone.style.top = clientY + 'px';
+                }
+            }
+            
+            // 更新当前悬停的放置区域
+            function updateDropZone(clientX, clientY) {
+                const elements = document.elementsFromPoint(clientX, clientY);
+                let newDropZone = null;
+                
+                for (let el of elements) {
+                    if (el === rowZone || el === columnZone || el === valueZone) {
+                        newDropZone = el;
+                        break;
+                    }
+                }
+                
+                // 更新放置区域高亮
+                if (currentDropZone !== newDropZone) {
+                    if (currentDropZone) {
+                        currentDropZone.style.backgroundColor = '';
+                    }
+                    currentDropZone = newDropZone;
+                    if (currentDropZone) {
+                        currentDropZone.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                    }
+                }
+            }
+            
+            // 触摸结束处理
+            function handleTouchEnd(e) {
+                endDrag();
+                touchFeedback.style.display = 'none';
+            }
+            
+            // 鼠标结束处理
+            function handleMouseEnd(e) {
+                endDrag();
+            }
+            
+            // 结束拖拽
+            function endDrag() {
+                if (!draggedItem) return;
+                
+                // 移除克隆元素
+                const clone = document.getElementById('dragging-clone');
+                if (clone) {
+                    clone.remove();
+                }
+                
+                // 恢复原始元素
+                draggedItem.style.opacity = '1';
+                
+                // 如果有放置区域，则添加元素
+                if (currentDropZone) {
+                    currentDropZone.style.backgroundColor = '';
+                    
+                    // 检查是否已经存在相同的字段
+                    const existingField = currentDropZone.querySelector(`[data-field="${draggedItem.dataset.field}"]`);
+                    if (existingField) {
+                        // 已有相同字段，不添加
+                        draggedItem = null;
+                        currentDropZone = null;
+                        return;
+                    }
+                    
+                    // 克隆元素并添加到放置区
+                    const clonedItem = draggedItem.cloneNode(true);
+                    clonedItem.classList.add('dropped-field');
+                    clonedItem.style.opacity = '1';
+                    
+                    // 添加删除按钮
+                    const removeBtn = document.createElement('span');
+                    removeBtn.innerHTML = '×';
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.addEventListener('click', function() {
+                        clonedItem.remove();
+                        updateEmptyPlaceholder(currentDropZone);
+                    });
+                    
+                    clonedItem.appendChild(removeBtn);
+                    currentDropZone.appendChild(clonedItem);
+                    
+                    // 更新空状态显示
+                    updateEmptyPlaceholder(currentDropZone);
+                }
+                
+                draggedItem = null;
+                currentDropZone = null;
+            }
+            
+            // 更新空状态显示
+            function updateEmptyPlaceholder(zone) {
+                const placeholder = zone.parentElement.querySelector('.empty-placeholder');
+                if (zone.children.length > 0) {
+                    placeholder.style.display = 'none';
+                } else {
+                    placeholder.style.display = 'block';
+                }
+            }
+            
+            // 生成数据透视表
+            generateBtn.addEventListener('click', function() {
+                const rowFields = Array.from(rowZone.querySelectorAll('.field')).map(f => f.dataset.field);
+                const columnFields = Array.from(columnZone.querySelectorAll('.field')).map(f => f.dataset.field);
+                const valueFields = Array.from(valueZone.querySelectorAll('.field')).map(f => f.dataset.field);
+                
+                if (valueFields.length === 0) {
+                    alert('请至少将一个字段拖到值区域');
+                    return;
+                }
+                
+                // 生成描述
+                let description = '按 ';
+                if (rowFields.length > 0) {
+                    description += rowFields.map(getFieldName).join('、') + ' ';
+                }
+                if (columnFields.length > 0) {
+                    description += (rowFields.length > 0 ? '和 ' : '') + columnFields.map(getFieldName).join('、') + ' ';
+                }
+                description += `分组，统计 ${valueFields.map(getFieldName).join('、')}`;
+                pivotDescription.textContent = description;
+                
+                // 生成假的数据透视表
+                generateMockPivotTable(rowFields, columnFields, valueFields);
+                
+                pivotContainer.style.display = 'block';
+                
+                // 滚动到结果区域
+                pivotContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            function generateMockPivotTable(rowFields, columnFields, valueFields) {
+                // 清空现有表格
+                pivotTable.innerHTML = '';
+
+                // 创建表头
+                const thead = document.createElement('thead');
+                const headerRow1 = document.createElement('tr'); // 第一行表头
+                const headerRow2 = document.createElement('tr'); // 第二行表头
+
+                // 添加行字段标题
+                rowFields.forEach(field => {
+                    const th = document.createElement('th');
+                    th.textContent = getFieldName(field);
+                    th.rowSpan = 2; // 行字段占两行
+                    th.style.textAlign = 'center';
+                    headerRow1.appendChild(th);
+                });
+
+                // 添加列字段标题
+                if (columnFields.length > 0) {
+                    const colField = columnFields[0];
+                    const values = getMockValues(colField);
+
+                    values.forEach(value => {
+                        const th = document.createElement('th');
+                        th.textContent = value;
+                        th.colSpan = valueFields.length; // 每个列字段值占多个列
+                        th.style.textAlign = 'center';
+                        headerRow1.appendChild(th);
+                    });
+
+                    valueFields.forEach(vField => {
+                        const th = document.createElement('th');
+                        th.textContent = getFieldName(vField);
+                        th.style.textAlign = 'center';
+                        headerRow2.appendChild(th);
+                    });
+                } else {
+                    // 如果没有列字段，只显示值字段
+                    valueFields.forEach(vField => {
+                        const th = document.createElement('th');
+                        th.textContent = getFieldName(vField);
+                        th.rowSpan = 2; // 值字段占两行
+                        th.style.textAlign = 'center';
+                        headerRow1.appendChild(th);
+                    });
+                }
+
+                thead.appendChild(headerRow1);
+                if (headerRow2.children.length > 0) {
+                    thead.appendChild(headerRow2);
+                }
+                pivotTable.appendChild(thead);
+
+                // 创建表格内容
+                const tbody = document.createElement('tbody');
+                const rowValues = rowFields.length > 0 ? getMockValues(rowFields[0]) : [''];
+
+                rowValues.forEach(rowValue => {
+                    const row = document.createElement('tr');
+
+                    // 添加行字段值
+                    if (rowFields.length > 0) {
+                        const td = document.createElement('td');
+                        td.textContent = rowValue;
+                        td.style.textAlign = 'center';
+                        row.appendChild(td);
+                    }
+
+                    // 添加列字段和数据
+                    if (columnFields.length > 0) {
+                        const colField = columnFields[0];
+                        const colValues = getMockValues(colField);
+
+                        colValues.forEach(() => {
+                            valueFields.forEach(vField => {
+                                const td = document.createElement('td');
+                                td.textContent = getRandomValue(vField);
+                                td.style.textAlign = 'center';
+                                row.appendChild(td);
+                            });
+                        });
+                    } else {
+                        // 如果没有列字段，直接显示值
+                        valueFields.forEach(vField => {
+                            const td = document.createElement('td');
+                            td.textContent = getRandomValue(vField);
+                            td.style.textAlign = 'center';
+                            row.appendChild(td);
+                        });
+                    }
+
+                    tbody.appendChild(row);
+                });
+
+                pivotTable.appendChild(tbody);
+            }
+            
+            function getFieldName(field) {
+                const names = {
+                    'region': '渠道',
+                    'product': '产品',
+                    'category': '类别',
+                    'sales': '销售额',
+                    'quantity': '数量',
+                    'year': '年份',
+                    'month': '月份'
+                };
+                return names[field] || field;
+            }
+            
+            function getMockValues(field) {
+                const mockData = {
+                    'region': ['智慧宝', '营业厅', '小程序', '第三方', '电视'],
+                    'product': ['产品A', '产品B', '产品C', '产品D'],
+                    'category': ['类别1', '类别2', '类别3'],
+                    'year': ['2023', '2024', '2025'],
+                    'month': ['1月', '2月', '3月', '4月', '5月', '6月']
+                };
+                return mockData[field] || [field];
+            }
+            
+            function getRandomValue(field) {
+                if (field === 'sales') {
+                    return (Math.random() * 10000).toFixed(2);
+                } else if (field === 'quantity') {
+                    return Math.floor(Math.random() * 100);
+                } else {
+                    return '-';
+                }
+            }
+            
+            // 初始化空状态显示
+            [rowZone, columnZone, valueZone].forEach(zone => {
+                updateEmptyPlaceholder(zone);
+            });
+        });
+    </script>
+</body>
+</html>

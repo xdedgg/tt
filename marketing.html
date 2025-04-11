@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>营销向导</title>
+
+ 
+ 
+<style>
+    /* 新增样式 - 营销向导报表页面 */
+    .report-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .report-overlay.open {
+            display: block;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .report-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .report-header .close-button {
+            font-size: 18px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .report-table th,
+        .report-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .report-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .report-table td {
+            background-color: white;
+            color: #555;
+        }
+
+        .report-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 报表名称样式 */
+        .report-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* 两列布局 */
+            gap: 15px;
+            /* 报表之间的间距 */
+            padding: 20px;
+            position: relative;
+            /* 为圆环定位 */
+        }
+
+        /* 圆环样式 */
+        .report-ring {
+            position: absolute;
+            top: 20px;
+            /* 圆环位于报表名称上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#4caf50 0% 30%,
+                    /* 绿色部分 */
+                    #f35a4a 30% 45%,
+                    /* 2部分 */
+                    #ffeb3b 45% 65%,
+                    /* 黄色部分 */
+                    #007bff 65% 70%,
+                    /* 橙色部分 */
+                    #36f482 70% 80%,
+                    /* 红色部分 */
+                    #fb1515 80% 100%
+                    /* 6部分 */
+
+                );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
+        }
+
+        .report-ring::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            /* 中间白色背景 */
+        }
+
+        .report-ring span {
+            position: relative;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            /* 事件总数文字颜色 */
+            z-index: 1;
+        }
+
+        /* 报表名称样式 */
+        .report-item {
+            position: relative;
+            top: 160%;
+            /* 将 report-item 放置在 report-ring 的下方 */
+            background-color: #ffffff;
+            /* 白色背景 */
+            border: 1px solid #e0e0e0;
+            /* 浅灰色边框 */
+            border-radius: 10px;
+            /* 圆角 */
+            padding: 20px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            /* 深灰色文字 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            /* 平滑过渡效果 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 阴影效果 */
+        }
+
+        .report-item .value {
+            font-size: 14px;
+            color: #666;
+            /* 小字数值颜色 */
+            margin-top: 5px;
+            display: block;
+        }
+
+        .report-item:hover {
+            background-color: #f8f8f8;
+            /* 鼠标悬停时背景色变浅 */
+            border-color: #007bff;
+            /* 鼠标悬停时边框变蓝色 */
+            transform: translateY(-5px);
+            /* 鼠标悬停时上移 */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            /* 悬停时阴影加深 */
+        }
+
+        .report-item:active {
+            transform: translateY(0);
+            /* 点击时恢复原位 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* 点击时阴影恢复 */
+        }
+</style> 
+</head>
+ 
+<body>
+ <!-- 营销向导报表列表 -->
+ <div id="marketing-reports" class="hidden">
+    <div class="report-list">
+        <!-- 圆环 -->
+        <div class="report-ring">
+            <span>120</span> <!-- 事件总数 -->
+        </div>
+
+        <!-- 报表名称 -->
+        <div class="report-item" onclick="showReport('report1')">
+            数字临期明细
+            <span class="value">30</span> <!-- 小字数值 -->
+        </div>
+        <div class="report-item" onclick="showReport('report2')">
+            宽带临期明细
+            <span class="value">15</span>
+        </div>
+        <div class="report-item" onclick="showReport('report3')">
+            低余额明细
+            <span class="value">20</span>
+        </div>
+        <div class="report-item" onclick="showReport('report4')">
+            待升级明细
+            <span class="value">5</span>
+        </div>
+        <div class="report-item" onclick="showReport('report5')">
+            高活跃度明细
+            <span class="value">10</span>
+        </div>
+        <div class="report-item" onclick="showReport('report6')">
+            高消费明细
+            <span class="value">20</span>
+        </div>
+    </div>
+</div>
+ 
+ 
+ 
+    <div id="report-overlay" class="report-overlay">
+    <div class="report-header">
+        <h2 id="report-title">报表标题</h2>
+        <div class="close-button" onclick="closeReport()">❌</div>
+    </div>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>←</th>
+                <th>明</th>
+                <th>细</th>
+                <th>→</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>数据1</td>
+                <td>数据2</td>
+                <td>数据3</td>
+                <td>数据4</td>
+            </tr>
+            <tr>
+                <td>数据5</td>
+                <td>数据6</td>
+                <td>数据7</td>
+                <td>数据8</td>
+            </tr>
+            <tr>
+                <td>数据9</td>
+                <td>数据10</td>
+                <td>数据11</td>
+                <td>数据12</td>
+            </tr>
+            <tr>
+                <td>数据13</td>
+                <td>数据14</td>
+                <td>数据15</td>
+                <td>数据16</td>
+            </tr>
+            <tr>
+                <td>数据17</td>
+                <td>数据18</td>
+                <td>数据19</td>
+                <td>数据20</td>
+            </tr>
+            <tr>
+                <td>数据21</td>
+                <td>数据22</td>
+                <td>数据23</td>
+                <td>数据24</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    // 显示报表页面
+    function showReport(reportId) {
+            const reportOverlay = document.getElementById('report-overlay');
+            const reportTitle = document.getElementById('report-title');
+            reportTitle.textContent = reportId.replace('report', '报表 ');
+            reportOverlay.classList.add('open');
+        }
+
+        // 关闭报表页面
+        function closeReport() {
+            const reportOverlay = document.getElementById('report-overlay');
+            reportOverlay.classList.remove('open');
+        }
+</script>
+
+    
+</body>
+
+</html>
