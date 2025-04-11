@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>业绩追踪看板</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,6 +18,7 @@
             padding: 10px;
             max-width: 100%;
             overflow-x: hidden;
+            font-size: 15px; /* 增大基础字体大小 */
         }
         
         .container {
@@ -30,11 +30,19 @@
         .header {
             text-align: center;
             margin-bottom: 15px;
-            padding: 10px;
+            padding: 12px;
             background: linear-gradient(135deg, #4b6cb7, #182848);
             color: white;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 20px; /* 增大标题大小 */
+        }
+        
+        .header p {
+            font-size: 14px; /* 增大副标题大小 */
         }
         
         .card {
@@ -46,53 +54,56 @@
         }
         
         .card-title {
-            font-size: 16px;
+            font-size: 17px; /* 增大卡片标题大小 */
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #444;
             border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            padding-bottom: 8px;
         }
         
         .grid-stats {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         
         .stat-item {
             text-align: center;
             flex: 1;
-            padding: 5px;
+            padding: 8px;
         }
         
         .stat-value {
-            font-size: 20px;
+            font-size: 22px; /* 增大统计值大小 */
             font-weight: bold;
             color: #4b6cb7;
+            margin-bottom: 3px;
         }
         
         .stat-label {
-            font-size: 12px;
+            font-size: 13px; /* 增大统计标签大小 */
             color: #777;
         }
         
         .progress-container {
-            margin-top: 10px;
+            margin-top: 12px;
+            font-size: 14px; /* 增大进度条文字大小 */
         }
         
         .progress-bar {
-            height: 20px;
+            height: 22px; /* 增大进度条高度 */
             background-color: #e0e0e0;
-            border-radius: 10px;
+            border-radius: 11px;
             overflow: hidden;
             position: relative;
+            margin-top: 6px;
         }
         
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #4b6cb7, #6a11cb);
-            border-radius: 10px;
+            border-radius: 11px;
             transition: width 0.5s ease;
         }
         
@@ -102,43 +113,57 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 12px;
+            font-size: 13px; /* 增大进度条文字大小 */
             font-weight: bold;
         }
         
         .personal-stats {
-            display: flex; /* 修改为横向排列 */
-            justify-content: space-between; /* 添加间距 */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         
         .personal-stat {
             background: #f8f9fa;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             text-align: center;
         }
         
         .personal-value {
-            font-size: 18px;
+            font-size: 20px; /* 增大个人统计值大小 */
             font-weight: bold;
             color: #4b6cb7;
+            margin-bottom: 3px;
         }
         
         .personal-label {
-            font-size: 12px;
+            font-size: 13px; /* 增大个人统计标签大小 */
             color: #777;
         }
         
         .chart-container {
             position: relative;
-            height: 200px;
             width: 100%;
+            margin: 10px 0;
+        }
+        
+        /* 调整趋势图容器高度和宽度 */
+        #trendChartContainer {
+            height: 220px; /* 增大趋势图高度 */
+            width: 100%; /* 全宽度 */
+        }
+        
+        /* 调整产品分布图容器高度和宽度 */
+        #productChartContainer {
+            height: 260px; /* 增大产品分布图高度 */
+            width: 100%; /* 全宽度 */
         }
         
         .rank {
             display: flex;
             align-items: center;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #eee;
         }
         
@@ -147,37 +172,47 @@
         }
         
         .rank-number {
-            width: 25px;
-            height: 25px;
+            width: 28px; /* 增大排名数字圆圈大小 */
+            height: 28px;
             background-color: #4b6cb7;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 10px;
-            font-size: 12px;
+            margin-right: 12px;
+            font-size: 14px; /* 增大排名数字大小 */
         }
         
         .rank-name {
             flex: 1;
-            font-size: 14px;
+            font-size: 15px; /* 增大排名名字大小 */
         }
         
         .rank-value {
             font-weight: bold;
             color: #4b6cb7;
+            font-size: 15px; /* 增大排名数值大小 */
         }
         
         .highlight {
             color: #ff6b6b;
             font-weight: bold;
         }
+        
+        canvas {
+            -webkit-tap-highlight-color: transparent;
+            width: 100% !important; /* 确保图表宽度充满容器 */
+            height: 100% !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        
+        <div class="header">
+            <h1>业绩追踪看板</h1>
+            <p>2025年4月数据</p>
+        </div>
         
         <div class="card">
             <div class="card-title">网格整体业绩</div>
@@ -213,10 +248,6 @@
                     <div class="personal-label">个人完成量</div>
                 </div>
                 <div class="personal-stat">
-                    <div class="personal-value">112%</div>
-                    <div class="personal-label">个人完成率</div>
-                </div>
-                <div class="personal-stat">
                     <div class="personal-value">14.9%</div>
                     <div class="personal-label">网格贡献率</div>
                 </div>
@@ -224,13 +255,16 @@
                     <div class="personal-value">5</div>
                     <div class="personal-label">个人排名</div>
                 </div>
-                
+                <div class="personal-stat">
+                    <div class="personal-value">112%</div>
+                    <div class="personal-label">个人完成率</div>
+                </div>
             </div>
         </div>
         
         <div class="card">
             <div class="card-title">月度趋势</div>
-            <div class="chart-container">
+            <div class="chart-container" id="trendChartContainer">
                 <canvas id="trendChart"></canvas>
             </div>
         </div>
@@ -271,81 +305,219 @@
         
         <div class="card">
             <div class="card-title">产品类型分布</div>
-            <div class="chart-container">
+            <div class="chart-container" id="productChartContainer">
                 <canvas id="productChart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        // 月度趋势图
-        const trendCtx = document.getElementById('trendChart').getContext('2d');
-        const trendChart = new Chart(trendCtx, {
-            type: 'line',
-            data: {
-                labels: ['1日', '5日', '10日', '15日', '20日', '25日', '30日'],
-                datasets: [
-                    {
-                        label: '网格累计',
-                        data: [120, 250, 420, 580, 790, 1020, 1248],
-                        borderColor: '#4b6cb7',
-                        backgroundColor: 'rgba(75, 108, 183, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: '个人累计',
-                        data: [18, 42, 75, 102, 135, 160, 186],
-                        borderColor: '#ff6b6b',
-                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+        // 内联的简化版Chart.js实现
+        (function(){
+            // 简化的Canvas绘图函数
+            function drawLine(ctx, points, color, width) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (var i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.stroke();
+            }
+            
+            function fillArea(ctx, points, color) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (var i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.lineTo(points[points.length-1].x, ctx.canvas.height);
+                ctx.lineTo(points[0].x, ctx.canvas.height);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+            
+            function drawBar(ctx, x, y, width, height, color) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, width, height);
+            }
+            
+            // 绘制趋势图
+            function drawTrendChart() {
+                var canvas = document.getElementById('trendChart');
+                if (!canvas) return;
+                
+                var container = document.getElementById('trendChartContainer');
+                canvas.width = container.offsetWidth * 2; // 提高清晰度
+                canvas.height = container.offsetHeight * 2;
+                canvas.style.width = container.offsetWidth + 'px';
+                canvas.style.height = container.offsetHeight + 'px';
+                
+                var ctx = canvas.getContext('2d');
+                ctx.scale(2, 2); // 缩放以适应高清显示
+                
+                var padding = 25; // 增加内边距
+                var width = canvas.width / 2 - padding * 2;
+                var height = canvas.height / 2 - padding * 2;
+                
+                // 网格数据
+                var gridData = [120, 250, 420, 580, 790, 1020, 1248];
+                // 个人数据
+                var personalData = [18, 42, 75, 102, 135, 160, 186];
+                var labels = ['1日', '5日', '10日', '15日', '20日', '25日', '30日'];
+                
+                // 计算比例和位置
+                var maxValue = Math.max(Math.max.apply(null, gridData), Math.max.apply(null, personalData));
+                var xStep = width / (gridData.length - 1);
+                
+                // 绘制网格线
+                ctx.strokeStyle = '#eee';
+                ctx.lineWidth = 1;
+                for (var i = 0; i <= 5; i++) {
+                    var y = padding + height - (height / 5) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(padding + width, y);
+                    ctx.stroke();
+                    
+                    // 刻度值
+                    ctx.fillStyle = '#999';
+                    ctx.font = '12px Arial'; // 增大字体
+                    ctx.fillText(Math.round(maxValue / 5 * i), padding - 30, y + 5);
+                }
+                
+                // 绘制X轴标签
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial'; // 增大字体
+                ctx.textAlign = 'center';
+                for (var i = 0; i < labels.length; i++) {
+                    ctx.fillText(labels[i], padding + i * xStep, canvas.height / 2 - 8);
+                }
+                
+                // 绘制网格数据线
+                var gridPoints = [];
+                for (var i = 0; i < gridData.length; i++) {
+                    gridPoints.push({
+                        x: padding + i * xStep,
+                        y: padding + height - (gridData[i] / maxValue * height)
+                    });
+                }
+                fillArea(ctx, gridPoints, 'rgba(75, 108, 183, 0.1)');
+                drawLine(ctx, gridPoints, '#4b6cb7', 3); // 加粗线条
+                
+                // 绘制个人数据线
+                var personalPoints = [];
+                for (var i = 0; i < personalData.length; i++) {
+                    personalPoints.push({
+                        x: padding + i * xStep,
+                        y: padding + height - (personalData[i] / maxValue * height)
+                    });
+                }
+                fillArea(ctx, personalPoints, 'rgba(255, 107, 107, 0.1)');
+                drawLine(ctx, personalPoints, '#ff6b6b', 3); // 加粗线条
+                
+                // 图例
+                ctx.fillStyle = '#4b6cb7';
+                ctx.fillRect(padding, 15, 18, 12); // 增大图例方块
+                ctx.fillStyle = '#333';
+                ctx.font = '13px Arial'; // 增大字体
+                ctx.textAlign = 'left';
+                ctx.fillText('网格累计', padding + 25, 25);
+                
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillRect(padding + 110, 15, 18, 12); // 增大图例方块
+                ctx.fillStyle = '#333';
+                ctx.fillText('个人累计', padding + 135, 25);
+            }
+            
+            // 绘制产品分布图
+            function drawProductChart() {
+                var canvas = document.getElementById('productChart');
+                if (!canvas) return;
+                
+                var container = document.getElementById('productChartContainer');
+                canvas.width = container.offsetWidth * 2; // 提高清晰度
+                canvas.height = container.offsetHeight * 2;
+                canvas.style.width = container.offsetWidth + 'px';
+                canvas.style.height = container.offsetHeight + 'px';
+                
+                var ctx = canvas.getContext('2d');
+                ctx.scale(2, 2); // 缩放以适应高清显示
+                
+                var centerX = canvas.width / 4;
+                var centerY = canvas.height / 4;
+                var radius = Math.min(canvas.width, canvas.height) / 4 - 25; // 增大半径
+                
+                var data = [35, 25, 20, 20];
+                var colors = ['#4b6cb7', '#6a11cb', '#ff6b6b', '#ffa502'];
+                var labels = ['产品A', '产品B', '产品C', '产品D'];
+                
+                var total = data.reduce(function(a, b) { return a + b; }, 0);
+                var startAngle = 0;
+                
+                // 绘制扇形
+                for (var i = 0; i < data.length; i++) {
+                    var sliceAngle = 2 * Math.PI * data[i] / total;
+                    
+                    ctx.beginPath();
+                    ctx.fillStyle = colors[i];
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    startAngle += sliceAngle;
+                }
+                
+                // 绘制中心空白
+                ctx.beginPath();
+                ctx.fillStyle = 'white';
+                ctx.arc(centerX, centerY, radius * 0.5, 0, 2 * Math.PI); // 减小中心空白
+                ctx.fill();
+                
+                // 绘制中心文字
+                ctx.fillStyle = '#666';
+                ctx.font = 'bold 16px Arial'; // 增大字体
+                ctx.textAlign = 'center';
+                ctx.fillText('产品分布', centerX, centerY - 8);
+                ctx.fillText(total + '单', centerX, centerY + 12);
+                
+                // 绘制图例
+                var legendX = 25;
+                var legendY = canvas.height / 2 - 70;
+                
+                for (var i = 0; i < data.length; i++) {
+                    ctx.fillStyle = colors[i];
+                    ctx.fillRect(legendX, legendY + i * 22, 18, 12); // 增大图例方块
+                    
+                    ctx.fillStyle = '#333';
+                    ctx.font = '12px Arial'; // 增大字体
+                    ctx.textAlign = 'left';
+                    ctx.fillText(labels[i] + ' ' + Math.round(data[i] / total * 100) + '%', 
+                                 legendX + 25, legendY + i * 22 + 10);
                 }
             }
-        });
-        
-        // 产品类型分布图
-        const productCtx = document.getElementById('productChart').getContext('2d');
-        const productChart = new Chart(productCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['产品A', '产品B', '产品C', '产品D'],
-                datasets: [{
-                    data: [35, 25, 20, 20],
-                    backgroundColor: [
-                        '#4b6cb7',
-                        '#6a11cb',
-                        '#ff6b6b',
-                        '#ffa502'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                }
+            
+            // 初始化图表
+            function initCharts() {
+                drawTrendChart();
+                drawProductChart();
             }
-        });
+            
+            // 页面加载完成后初始化
+            if (document.readyState === 'complete') {
+                initCharts();
+            } else {
+                window.addEventListener('load', initCharts);
+            }
+            
+            // 窗口大小改变时重新绘制图表
+            window.addEventListener('resize', function() {
+                initCharts();
+            });
+        })();
     </script>
 </body>
 </html>
