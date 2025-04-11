@@ -209,8 +209,7 @@
 </head>
 <body>
     <div class="container">
-        
-        
+               
         <div class="card">
             <div class="card-title">网格整体业绩</div>
             <div class="grid-stats">
@@ -355,9 +354,10 @@
                 var ctx = canvas.getContext('2d');
                 ctx.scale(2, 2); // 缩放以适应高清显示
                 
-                var padding = 25; // 增加内边距
+                var padding = 20; // 
                 var width = canvas.width / 2 - padding * 2;
                 var height = canvas.height / 2 - padding * 2;
+                ctx.translate((container.offsetWidth - width) / 2 - 8, (container.offsetHeight - height) / 2 - 30); // 垂直向上移动10像素
                 
                 // 网格数据
                 var gridData = [120, 250, 420, 580, 790, 1020, 1248];
