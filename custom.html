@@ -162,6 +162,10 @@
             background-color: #f8f8f8;
             font-weight: bold;
         }
+        .pivot-table .total-row {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
         .empty-placeholder {
             color: #999;
             font-style: italic;
@@ -191,7 +195,6 @@
 </head>
 <body>
     <div class="container">
-       
         <div class="fields-panel">
             <div class="drop-zone-title">可用字段</div>
             <div class="fields-container" id="available-fields">
@@ -478,51 +481,63 @@
                 // 清空现有表格
                 pivotTable.innerHTML = '';
 
+                // 生成列字段的所有组合
+                const columnCombinations = columnFields.length > 0 ? 
+                    generateCombinations(columnFields.map(field => ({
+                        field: field,
+                        values: getMockValues(field)
+                    }))) : 
+                    [{}];
+                
                 // 创建表头
                 const thead = document.createElement('thead');
-                const headerRow1 = document.createElement('tr'); // 第一行表头
-                const headerRow2 = document.createElement('tr'); // 第二行表头
-
+                
+                // 根据列字段数量创建表头行
+                const headerRowCount = columnFields.length > 0 ? columnFields.length + 1 : 1;
+                const headerRows = Array.from({length: headerRowCount}, () => document.createElement('tr'));
+                
                 // 添加行字段标题
                 rowFields.forEach(field => {
                     const th = document.createElement('th');
                     th.textContent = getFieldName(field);
-                    th.rowSpan = 2; // 行字段占两行
+                    th.rowSpan = headerRowCount;
                     th.style.textAlign = 'center';
-                    headerRow1.appendChild(th);
+                    headerRows[0].appendChild(th);
                 });
 
                 // 添加列字段标题
                 if (columnFields.length > 0) {
-                    const colField = columnFields[0];
-                    const values = getMockValues(colField);
-
-                    values.forEach(value => {
-                        const th = document.createElement('th');
-                        th.textContent = value;
-                        th.colSpan = valueFields.length; // 每个列字段值占多个列
-                        th.style.textAlign = 'center';
-                        headerRow1.appendChild(th);
-                    });
-
-                    // 添加值字段标题
-                    if (valueFields.length > 1) {
-                        // 如果有多个值字段，需要添加第二行表头
-                        // 先添加空单元格对齐行字段
-                        for (let i = 0; i < rowFields.length; i++) {
-                            const th = document.createElement('th');
-                            th.style.display = 'none';
-                            headerRow2.appendChild(th);
-                        }
+                    // 为每个列字段添加标题
+                    columnFields.forEach((field, fieldIndex) => {
+                        const values = getMockValues(field);
+                        const spanSize = Math.pow(values.length, columnFields.length - fieldIndex - 1) * valueFields.length;
                         
-                        // 为每个列字段值添加值字段标题
-                        values.forEach(() => {
-                            valueFields.forEach(vField => {
+                        // 计算每个值需要重复多少次
+                        const repeatCount = Math.pow(values.length, fieldIndex);
+                        
+                        // 创建标题单元格
+                        for (let i = 0; i < repeatCount; i++) {
+                            values.forEach(value => {
                                 const th = document.createElement('th');
-                                th.textContent = getFieldName(vField);
+                                th.textContent = value;
+                                th.colSpan = spanSize;
+                                if (fieldIndex < columnFields.length - 1) {
+                                    th.rowSpan = columnFields.length - fieldIndex;
+                                }
                                 th.style.textAlign = 'center';
-                                headerRow2.appendChild(th);
+                                headerRows[fieldIndex].appendChild(th);
                             });
+                        }
+                    });
+                    
+                    // 添加值字段标题
+                    const valueCellsCount = columnCombinations.length;
+                    for (let i = 0; i < valueCellsCount; i++) {
+                        valueFields.forEach(vField => {
+                            const th = document.createElement('th');
+                            th.textContent = getFieldName(vField);
+                            th.style.textAlign = 'center';
+                            headerRows[headerRowCount - 1].appendChild(th);
                         });
                     }
                 } else {
@@ -530,62 +545,60 @@
                     valueFields.forEach(vField => {
                         const th = document.createElement('th');
                         th.textContent = getFieldName(vField);
-                        th.rowSpan = 2; // 值字段占两行
+                        th.rowSpan = headerRowCount;
                         th.style.textAlign = 'center';
-                        headerRow1.appendChild(th);
+                        headerRows[0].appendChild(th);
                     });
                 }
 
-                thead.appendChild(headerRow1);
-                if (headerRow2.children.length > 0) {
-                    thead.appendChild(headerRow2);
-                }
+                // 将表头行添加到表头
+                headerRows.forEach(row => {
+                    if (row.children.length > 0) {
+                        thead.appendChild(row);
+                    }
+                });
                 pivotTable.appendChild(thead);
 
+                // 生成行字段的所有组合
+                const rowCombinations = rowFields.length > 0 ? 
+                    generateCombinations(rowFields.map(field => ({
+                        field: field,
+                        values: getMockValues(field)
+                    }))) : 
+                    [{}];
+                
                 // 创建表格内容
                 const tbody = document.createElement('tbody');
-                const rowValues = rowFields.length > 0 ? getMockValues(rowFields[0]) : ['总计'];
-
-                rowValues.forEach(rowValue => {
+                
+                // 添加数据行
+                rowCombinations.forEach(rowCombo => {
                     const row = document.createElement('tr');
-
+                    
                     // 添加行字段值
-                    if (rowFields.length > 0) {
+                    rowFields.forEach(field => {
                         const td = document.createElement('td');
-                        td.textContent = rowValue;
+                        td.textContent = rowCombo[field] || '';
                         td.className = 'row-header';
                         row.appendChild(td);
-                    }
-
-                    // 添加列字段和数据
-                    if (columnFields.length > 0) {
-                        const colField = columnFields[0];
-                        const colValues = getMockValues(colField);
-
-                        colValues.forEach(() => {
-                            valueFields.forEach(vField => {
-                                const td = document.createElement('td');
-                                const value = getRandomValue(vField);
-                                td.textContent = formatValue(vField, value);
-                                row.appendChild(td);
-                            });
-                        });
-                    } else {
-                        // 如果没有列字段，直接显示值
+                    });
+                    
+                    // 添加列字段组合对应的数据
+                    columnCombinations.forEach(colCombo => {
                         valueFields.forEach(vField => {
                             const td = document.createElement('td');
                             const value = getRandomValue(vField);
                             td.textContent = formatValue(vField, value);
                             row.appendChild(td);
                         });
-                    }
-
+                    });
+                    
                     tbody.appendChild(row);
                 });
 
                 // 添加总计行
                 if (rowFields.length > 0 || columnFields.length > 0) {
                     const totalRow = document.createElement('tr');
+                    totalRow.className = 'total-row';
                     
                     // 添加行字段标题
                     if (rowFields.length > 0) {
@@ -593,6 +606,13 @@
                         td.textContent = '总计';
                         td.className = 'row-header';
                         totalRow.appendChild(td);
+                        
+                        // 如果有多行字段，其他行字段单元格留空
+                        for (let i = 1; i < rowFields.length; i++) {
+                            const td = document.createElement('td');
+                            td.className = 'row-header';
+                            totalRow.appendChild(td);
+                        }
                     } else {
                         const td = document.createElement('td');
                         td.textContent = '总计';
@@ -601,33 +621,37 @@
                     }
                     
                     // 添加总计数据
-                    if (columnFields.length > 0) {
-                        const colField = columnFields[0];
-                        const colValues = getMockValues(colField);
-                        
-                        colValues.forEach(() => {
-                            valueFields.forEach(vField => {
-                                const td = document.createElement('td');
-                                const value = getRandomValue(vField, true); // 总计值通常更大
-                                td.textContent = formatValue(vField, value);
-                                td.style.fontWeight = 'bold';
-                                totalRow.appendChild(td);
-                            });
-                        });
-                    } else {
+                    columnCombinations.forEach(() => {
                         valueFields.forEach(vField => {
                             const td = document.createElement('td');
-                            const value = getRandomValue(vField, true); // 总计值通常更大
+                            const value = getRandomValue(vField, true);
                             td.textContent = formatValue(vField, value);
-                            td.style.fontWeight = 'bold';
                             totalRow.appendChild(td);
                         });
-                    }
+                    });
                     
                     tbody.appendChild(totalRow);
                 }
 
                 pivotTable.appendChild(tbody);
+            }
+            
+            // 生成所有可能的字段值组合
+            function generateCombinations(fieldDefinitions, index = 0, current = {}, result = []) {
+                if (index === fieldDefinitions.length) {
+                    if (Object.keys(current).length > 0) {
+                        result.push({...current});
+                    }
+                    return result;
+                }
+                
+                const {field, values} = fieldDefinitions[index];
+                values.forEach(value => {
+                    current[field] = value;
+                    generateCombinations(fieldDefinitions, index + 1, current, result);
+                });
+                
+                return result;
             }
             
             function formatValue(field, value) {
