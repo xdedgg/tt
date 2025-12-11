@@ -1490,62 +1490,7 @@
         </ul>
     </div>
 
-    <!-- 子面板 -->
-    <div class="sub-panel" id="subPanel">
-        <div class="sub-panel-header">
-            <span class="close-btn" id="closeSubPanel">×</span>
-        </div>
-        <div class="sub-panel-content">
-            <div class="phch-container">
-                <h1 class="phch-h1">入户服务打卡</h1>
-
-                <div class="phch-card">
-                    <div class="phch-info-grid">
-                        <div class="phch-info-label">员工</div>
-                        <div class="phch-info-value" id="phch-employeeValue">李师傅 (500900)</div>
-
-                        <div class="phch-info-label">位置</div>
-                        <div>
-                            <div id="phch-locationValue">正在定位中...</div>
-                            <div id="phch-locationTime"></div>
-                        </div>
-
-                        <div class="phch-info-label">时间</div>
-                        <div class="phch-info-value" id="phch-currentTime"></div>
-                    </div>
-
-                    <select class="phch-select" id="phch-serviceType">
-                        <option value="">-- 选择服务类型 --</option>
-                        <option value="repair">设备维修</option>
-                        <option value="install">开户安装</option>
-                        <option value="inspect">营销推广</option>
-                        <option value="train">定期检查</option>
-                    </select>
-
-                    <div class="phch-photo-section">
-                        <div class="phch-photo-placeholder" id="phch-photoPlaceholder">
-                            <div class="phch-avatar" id="phch-avatar">
-                                <div class="phch-avatar-head"></div>
-                                <div class="phch-avatar-body"></div>
-                                <div class="phch-avatar-eye left"></div>
-                                <div class="phch-avatar-eye right"></div>
-                                <div class="phch-avatar-mouth"></div>
-                            </div>
-                            <div class="phch-placeholder-text" id="phch-placeholderText">点击下方按钮拍摄现场照片</div>
-                        </div>
-
-                        <div class="phch-button-group">
-                            <button class="phch-button" id="phch-takePhoto">拍照</button>
-                            <button class="phch-button" id="phch-retakePhoto">重拍</button>
-                        </div>
-
-                        <div class="phch-status" id="phch-photoStatus"></div>
-                        <div class="phch-photo-time" id="phch-photoTime"></div>
-                    </div>
-                </div>
-
-                <button class="phch-button" id="phch-submitBtn">提交打卡记录</button>
-            </div>
+    
 
 
 
@@ -1643,6 +1588,7 @@
                     
                     <div class="zjss">
                         <input type="text" class="zjss-input" placeholder="🔍客户搜索...">
+<p> <span class="open-link" onclick="openHtml2()"> 点我</span></p>
                     </div>
                     <div class="grid-9">
                         <div class="grid-item"><i>📁</i><span>固功1</span></div>
@@ -2264,123 +2210,7 @@
 
 
 
-        // 使用IIFE封装所有代码，避免全局污染
-        (function () {
-            // 当前时间显示（实时更新）
-            function updateCurrentTime() {
-                const now = new Date();
-                const timeStr = now.toLocaleString('zh-CN', {
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                document.getElementById('phch-currentTime').textContent = timeStr;
-            }
-            setInterval(updateCurrentTime, 1000);
-            updateCurrentTime();
-
-           // 将模拟定位逻辑封装到一个函数中
-function simulateLocation() {
-    const locations = [
-        "和平区光华路8号15楼",
-        "光华区某大街15号3单元",
-        "光华区金融大街1号B座"
-    ];
-    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-
-    // 记录定位时间（固定不变）
-    const now = new Date();
-    const locationTimeStr = now.toLocaleTimeString('zh-CN', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    document.getElementById('phch-locationValue').textContent = randomLocation;
-    document.getElementById('phch-locationTime').textContent = `定位时间: ${locationTimeStr}`;
-}
-
-// 在用户点击进入打卡页面时调用模拟定位函数
-document.getElementById('firstSetting').addEventListener('click', function () {
-    subPanel.style.display = 'block';
-    // 调用模拟定位函数
-    setTimeout(simulateLocation, 3000); // 模拟3秒的延迟
-});
-
-            // 拍照功能
-            const phchPhotoPlaceholder = document.getElementById('phch-photoPlaceholder');
-            const phchAvatar = document.getElementById('phch-avatar');
-            const phchPlaceholderText = document.getElementById('phch-placeholderText');
-            const phchTakePhotoBtn = document.getElementById('phch-takePhoto');
-            const phchRetakePhotoBtn = document.getElementById('phch-retakePhoto');
-            const phchPhotoStatus = document.getElementById('phch-photoStatus');
-            const phchPhotoTime = document.getElementById('phch-photoTime');
-
-            phchTakePhotoBtn.addEventListener('click', function () {
-                // 显示几何头像
-                phchAvatar.style.display = 'block';
-                phchPlaceholderText.style.display = 'none';
-                phchPhotoPlaceholder.classList.add('active');
-
-                // 更新状态
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                phchPhotoStatus.textContent = "已拍摄现场照片";
-                phchPhotoTime.textContent = "拍摄时间: " + timeStr;
-
-                // 切换按钮状态
-                phchTakePhotoBtn.style.display = 'none';
-                phchRetakePhotoBtn.style.display = 'block';
-
-                // 随机改变头像颜色
-                const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                document.querySelector('.phch-avatar-head').style.background = randomColor;
-                document.querySelector('.phch-avatar-body').style.background = randomColor;
-
-                // 添加拍照动画
-                phchAvatar.style.transform = 'scale(1.1)';
-                setTimeout(() => {
-                    phchAvatar.style.transform = 'scale(1)';
-                }, 300);
-            });
-
-            phchRetakePhotoBtn.addEventListener('click', function () {
-                // 重置拍照状态
-                phchTakePhotoBtn.style.display = 'block';
-                phchRetakePhotoBtn.style.display = 'none';
-                phchPhotoStatus.textContent = "";
-                phchPhotoTime.textContent = "";
-
-                // 隐藏头像显示提示文字
-                phchAvatar.style.display = 'none';
-                phchPlaceholderText.style.display = 'block';
-                phchPhotoPlaceholder.classList.remove('active');
-            });
-
-            // 提交功能
-            document.getElementById('phch-submitBtn').addEventListener('click', function () {
-                const serviceType = document.getElementById('phch-serviceType').value;
-                if (!serviceType) {
-                    alert('请选择服务类型');
-                    return;
-                }
-
-                if (!phchPhotoPlaceholder.classList.contains('active')) {
-                    alert('请先拍摄现场照片');
-                    return;
-                }
-
-                const employee = document.getElementById('phch-employeeValue').textContent;
-                const location = document.getElementById('phch-locationValue').textContent;
-                const locationTime = document.getElementById('phch-locationTime').textContent;
-                const currentTime = document.getElementById('phch-currentTime').textContent;
-                const photoTimeStr = phchPhotoTime.textContent.replace("拍摄时间: ", "");
-                const serviceText = document.getElementById('phch-serviceType').options[document.getElementById('phch-serviceType').selectedIndex].text;
-
-                alert(`打卡成功！\n\n${employee}\n服务类型: ${serviceText}\n服务地点: ${location}\n（入户）${locationTime}\n（服务）拍照时间: ${photoTimeStr}\n（结束）打卡时间: ${currentTime}`);
-            });
-        })();
+       
 
 
         // 动态计算设备底部圆角
@@ -2440,6 +2270,11 @@ document.getElementById('firstSetting').addEventListener('click', function () {
             gridItems.forEach(item => item.classList.remove('active'));
             const activeItem = document.querySelector(`.grid-item[onclick*="${fileName}"]`);
             if (activeItem) activeItem.classList.add('active');
+        }
+
+function openHtml2() {
+            // 在当前窗口打开html2
+            window.location.href = 'html2.html';
         }
     </script>
 </body>
