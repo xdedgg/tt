@@ -21,38 +21,38 @@
             min-height: 100vh;
         }
         
-        /* 背景图片样式 - 修改点1 */
+        /* 背景图片样式 */
         .background-image {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2; /* 放在最底层 */
-            background-image: url('background.jpg'); /* 请替换为您的本地图片路径 */
+            z-index: -2;
+            background-image: url('background.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0; /* 初始就隐藏 */
-            transition: opacity 0.5s ease; /* 添加淡出效果 */
-            pointer-events: none; /* 防止干扰其他元素 */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
         }
         
         .background-image.hidden {
-            opacity: 0; /* 点击哈罗后隐藏 */
-            pointer-events: none; /* 防止干扰其他元素 */
+            opacity: 0;
+            pointer-events: none;
         }
         
         .container {
             background-color: rgba(255, 255, 255, 0.3);                 
             margin-top: 20px;
-            position: relative; /* 确保在背景图片上方 */
+            position: relative;
             z-index: 1;
         }
         
         .main-page {
             text-align: center;
-            display: none; /* 默认隐藏主页面 */
+            display: none;
         }
         
         .hello-btn {
@@ -72,7 +72,7 @@
         }
         
         .info-page {
-            display: block; /* 修改：默认显示客户信息页面 */
+            display: block;
         }
         
         .info-line {
@@ -103,7 +103,7 @@
             cursor: pointer;
             border: 2px solid #ff4500;
             border-radius: 4px;
-            height: 50px; /* 统一高度 */
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -471,6 +471,119 @@
             padding: 20px;
         }
         
+        /* 摄像头界面样式 */
+        .camera-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .camera-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .camera-header {
+            background-color: #000;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .camera-view {
+            width: 100%;
+            height: 400px;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .camera-placeholder {
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .camera-placeholder .camera-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background-color: #000;
+        }
+        
+        .camera-btn {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .camera-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .camera-btn.capture {
+            background-color: #fff;
+            color: #000;
+        }
+        
+        .camera-btn.cancel {
+            background-color: #666;
+            color: white;
+        }
+        
+        .camera-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+        
+        .camera-flash.active {
+            opacity: 0.9;
+        }
+        
         @media (max-width: 768px) {
             .info-section {
                 grid-template-columns: 1fr;
@@ -488,19 +601,30 @@
             
             /* 手机端 */
             .button-row {
-                flex-direction: row; /* 保持水平排列 */
+                flex-direction: row;
                 gap: 5px;
             }
             
             .button-row button {
-                margin: 0 5px; /* 减小间距 */
-                padding: 8px 5px; /* 减小内边距 */
-                font-size: 14px; /* 减小字体大小 */
-                height: 45px; /* 稍微调整高度 */
-                min-width: 0; /* 允许按钮缩小 */
+                margin: 0 5px;
+                padding: 8px 5px;
+                font-size: 14px;
+                height: 45px;
+                min-width: 0;
             }
             
-            /* 极端小屏幕时的处理 */
+            /* 摄像头界面适配移动端 */
+            .camera-container {
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                border-radius: 0;
+            }
+            
+            .camera-view {
+                height: calc(100vh - 160px);
+            }
+            
             @media (max-width: 480px) {
                 .button-row button {
                     font-size: 13px;
@@ -564,7 +688,6 @@
             <span id="balance" style="color: #e74c3c;">¥ 120.00</span>
         </div>
         
-        
         <div class="button-row">
             <button onclick="reQuery()" style="background-color: #f7f6f3; color: #fa2222;">重新查询</button>
             <button onclick="confirmCustomer()" style="background-color: #fa2222; color: white;">确定客户</button>
@@ -616,7 +739,7 @@
         <div class="photo-section">
             <h2 class="section-title">现场拍照</h2>
             <div class="photo-controls">
-                <button id="takePhotoBtn" class="btn-primary" onclick="takePhoto()" disabled>拍照上传</button>
+                <button id="takePhotoBtn" class="btn-primary" onclick="openCamera()" disabled>打开摄像头拍照</button>
                 <button id="clearPhotosBtn" class="btn-danger" onclick="clearAllPhotos()" disabled>删除所有照片</button>
             </div>
             <div class="photos-container" id="photosContainer">
@@ -660,6 +783,27 @@
             <button id="finishServiceBtn" class="btn-finish" onclick="finishService()" disabled>结束服务</button>
         </div>
     </div>
+    
+    <!-- 摄像头界面 -->
+    <div id="cameraModal" class="camera-modal">
+        <div class="camera-container">
+            <div class="camera-header">
+                <span>拍照 - 请对准现场</span>
+            </div>
+            <div class="camera-view">
+                <div class="camera-placeholder">
+                    <div class="camera-icon">📷</div>
+                    <div>摄像头预览区域</div>
+                    <div style="font-size: 14px; margin-top: 10px;">模拟摄像头界面 - 实际应用中将显示实时画面</div>
+                </div>
+                <div id="cameraFlash" class="camera-flash"></div>
+            </div>
+            <div class="camera-controls">
+                <button class="camera-btn cancel" onclick="closeCamera()">取消</button>
+                <button class="camera-btn capture" onclick="capturePhoto()">拍照</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // 全局变量
@@ -668,12 +812,12 @@
         let photoCount = 0;
         let photos = [];
         let serviceTimer = null;
+        let cameraStream = null;
+        let cameraVideo = null;
         
         // 页面显示控制函数
         function showInfoPage() {
-            // 隐藏背景图片 - 修改点1
             document.getElementById('backgroundImage').classList.add('hidden');
-            
             document.getElementById('mainPage').style.display = 'none';
             document.getElementById('infoPage').style.display = 'block';
             document.getElementById('servicePage').style.display = 'none';
@@ -766,7 +910,6 @@
             document.getElementById('startServiceBtn').disabled = true;
             
             // 显示提示信息
-            //  alert("已开始服务，开始时间：" + formatTime(serviceStartTime));
             showNotification("服务已开始，开始时间：" + formatTime(serviceStartTime));
             
             // 开始计时器
@@ -841,26 +984,102 @@
             }
         }
         
+        // 打开摄像头
+        function openCamera() {
+            // 显示摄像头界面
+            document.getElementById('cameraModal').style.display = 'flex';
+            
+            // 在实际应用中，这里会调用真实的摄像头API
+            // 这里模拟打开摄像头的过程
+            showNotification('正在打开摄像头...');
+            
+            // 模拟摄像头开启成功
+            setTimeout(() => {
+                // 模拟摄像头准备就绪
+                console.log('摄像头已就绪');
+            }, 500);
+        }
+        
+        // 关闭摄像头
+        function closeCamera() {
+            // 关闭摄像头界面
+            document.getElementById('cameraModal').style.display = 'none';
+            
+            // 在实际应用中，这里会停止摄像头流
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            
+            showNotification('已关闭摄像头');
+        }
+        
         // 拍照功能
-        function takePhoto() {
-            // 模拟拍照 - 在实际应用中这里会调用摄像头API
+        function capturePhoto() {
+            // 模拟闪光灯效果
+            const flash = document.getElementById('cameraFlash');
+            flash.classList.add('active');
+            
+            // 播放快门声音（在实际应用中）
+            playShutterSound();
+            
+            // 模拟拍照过程
+            setTimeout(() => {
+                flash.classList.remove('active');
+                
+                // 关闭摄像头界面
+                closeCamera();
+                
+                // 模拟照片处理时间
+                setTimeout(() => {
+                    // 添加模拟照片
+                    addPhotoFromCamera();
+                }, 500);
+            }, 200);
+        }
+        
+        // 播放快门声音
+        function playShutterSound() {
+            try {
+                // 创建快门声音
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log('无法播放快门声音:', e);
+            }
+        }
+        
+        // 从摄像头添加照片
+        function addPhotoFromCamera() {
             photoCount++;
             const photoId = 'photo_' + Date.now();
             const photo = {
                 id: photoId,
                 name: '现场照片_' + photoCount + '.jpg',
-                // 在实际应用中，这里会是真实的图片数据
-                // 现在我们使用一个随机的占位图片
-                url: `https://picsum.photos/100/100?random=${photoCount + Date.now()}`
+                // 使用模拟图片代替实际拍摄的照片
+                url: `https://picsum.photos/100/100?random=${photoCount + Date.now()}`,
+                timestamp: new Date().toLocaleString()
             };
             
             photos.push(photo);
             renderPhotos();
             
-
+            // 保存到本地存储
+            localStorage.setItem('servicePhotos', JSON.stringify(photos));
             
             // 显示拍照成功提示
-            showNotification('照片已添加：' + photo.name);
+            showNotification('照片拍摄成功：' + photo.name);
         }
         
         // 渲染照片
@@ -893,7 +1112,9 @@
             photos = photos.filter(photo => photo.id !== photoId);
             renderPhotos();
             
-                       
+            // 更新本地存储
+            localStorage.setItem('servicePhotos', JSON.stringify(photos));
+            
             // 显示删除成功提示
             showNotification('照片已删除');
         }
@@ -951,7 +1172,7 @@
             showInfoPage();
         }
         
-        // 取消服务 - 已修改
+        // 取消服务
         function cancelService() {
             if (confirm('确定要取消本次服务吗？所有数据将被清除。')) {
                 // 清空照片显示
