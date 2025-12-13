@@ -349,12 +349,18 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item:hover img {
+            transform: scale(1.05);
         }
         
         .delete-photo {
@@ -372,6 +378,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
+        }
+        
+        .delete-photo:hover {
+            background-color: rgba(192, 57, 43, 0.9);
         }
         
         .service-type-section {
@@ -584,6 +595,124 @@
             opacity: 0.9;
         }
         
+        /* 全屏图片覆盖层样式 */
+        .fullscreen-image-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .fullscreen-image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .fullscreen-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        
+        .close-image-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 2001;
+        }
+        
+        .close-image-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* 大图查看器样式 */
+        .image-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-viewer-img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        
+        .close-image-viewer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 3001;
+        }
+        
+        .close-image-viewer:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .image-info {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
         @media (max-width: 768px) {
             .info-section {
                 grid-template-columns: 1fr;
@@ -625,6 +754,29 @@
                 height: calc(100vh - 160px);
             }
             
+            /* 全屏图片覆盖层在移动端的适配 */
+            .close-image-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 25px;
+                top: 15px;
+                left: 15px;
+            }
+            
+            /* 大图查看器在移动端的适配 */
+            .close-image-viewer {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                top: 15px;
+                right: 15px;
+            }
+            
+            .image-viewer-img {
+                max-width: 95%;
+                max-height: 80%;
+            }
+            
             @media (max-width: 480px) {
                 .button-row button {
                     font-size: 13px;
@@ -646,10 +798,27 @@
     <!-- 背景图片 -->
     <div id="backgroundImage" class="background-image"></div>
     
+    <!-- 全屏图片覆盖层 -->
+    <div id="imageOverlay" class="fullscreen-image-overlay">
+        <div class="fullscreen-image-container">
+            <button class="close-image-btn" onclick="closeFullscreenImage()">←</button>
+            <img id="fullscreenImage" class="fullscreen-image" src="shouli.png" alt="受理图片" onclick="openHtml3()">
+        </div>
+    </div>
+    
+    <!-- 大图查看器 -->
+    <div id="imageViewerModal" class="image-viewer-modal">
+        <div class="image-viewer-container">
+            <button class="close-image-viewer" onclick="closeImageViewer()">×</button>
+            <img id="imageViewerImg" class="image-viewer-img" src="" alt="大图预览">
+            <div id="imageInfo" class="image-info"></div>
+        </div>
+    </div>
+    
     <!-- 主页面 -->
     <div id="mainPage" class="container main-page">
         <div class="hello-btn" onclick="showInfoPage()">
-            办理业务前在此页面搜索客户
+            
         </div>
     </div>
     
@@ -815,6 +984,9 @@
         let cameraStream = null;
         let cameraVideo = null;
         
+        // 本地图片数组，按顺序使用1.jpg到10.jpg
+        const localImages = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg'];
+        
         // 页面显示控制函数
         function showInfoPage() {
             document.getElementById('backgroundImage').classList.add('hidden');
@@ -846,7 +1018,26 @@
         }
         
         function confirmCustomer() {
-            alert('客户信息已确认！');
+            // 显示全屏图片
+            showFullscreenImage();
+        }
+        
+        // 显示全屏图片
+        function showFullscreenImage() {
+            document.getElementById('imageOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // 防止页面滚动
+        }
+        
+        // 关闭全屏图片
+        function closeFullscreenImage() {
+            document.getElementById('imageOverlay').style.display = 'none';
+            document.body.style.overflow = ''; // 恢复页面滚动
+        }
+        
+        // 打开html3.html文件
+        function openHtml3() {
+            window.open('html3.html', '_blank');
+            // 或者使用 location.href = 'html3.html'; 在当前窗口打开
         }
         
         function serviceCheckIn() {
@@ -1064,11 +1255,15 @@
         function addPhotoFromCamera() {
             photoCount++;
             const photoId = 'photo_' + Date.now();
+            
+            // 获取当前照片在数组中的索引（从0开始）
+            const photoIndex = (photoCount - 1) % localImages.length;
+            
             const photo = {
                 id: photoId,
                 name: '现场照片_' + photoCount + '.jpg',
-                // 使用模拟图片代替实际拍摄的照片
-                url: `https://picsum.photos/100/100?random=${photoCount + Date.now()}`,
+                // 使用本地图片文件，按顺序使用1.jpg到10.jpg
+                url: localImages[photoIndex],
                 timestamp: new Date().toLocaleString()
             };
             
@@ -1096,19 +1291,42 @@
             }
             
             container.innerHTML = '';
-            photos.forEach(photo => {
+            photos.forEach((photo, index) => {
                 const photoElement = document.createElement('div');
                 photoElement.className = 'photo-item';
                 photoElement.innerHTML = `
-                    <img src="${photo.url}" alt="${photo.name}">
+                    <img src="${photo.url}" alt="${photo.name}" onclick="viewPhoto(${index})">
                     <button class="delete-photo" onclick="deletePhoto('${photo.id}')">×</button>
                 `;
                 container.appendChild(photoElement);
             });
         }
         
+        // 查看照片大图
+        function viewPhoto(index) {
+            if (index >= 0 && index < photos.length) {
+                const photo = photos[index];
+                document.getElementById('imageViewerImg').src = photo.url;
+                document.getElementById('imageInfo').textContent = `${photo.name} - ${photo.timestamp}`;
+                document.getElementById('imageViewerModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // 防止页面滚动
+            }
+        }
+        
+        // 关闭大图查看器
+        function closeImageViewer() {
+            document.getElementById('imageViewerModal').style.display = 'none';
+            document.body.style.overflow = ''; // 恢复页面滚动
+        }
+        
+        // 点击大图也可以关闭（可选的额外功能）
+        document.getElementById('imageViewerImg').addEventListener('click', closeImageViewer);
+        
         // 删除照片
         function deletePhoto(photoId) {
+            // 阻止事件冒泡，防止触发查看大图
+            event.stopPropagation();
+            
             photos = photos.filter(photo => photo.id !== photoId);
             renderPhotos();
             
@@ -1292,7 +1510,6 @@
             // 直接显示客户信息页面
             showInfoPage();
         };
-
 function closePage() {
             // 返回上一页（index）
             window.history.back();
