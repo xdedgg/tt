@@ -1489,14 +1489,10 @@
         };
 
         function closePage() {
-            // 如果当前页面是通过 window.open() 打开的，可以关闭
-            if (window.opener) {
-                window.close();
-            } else {
-                // 如果不是，则返回主页面
-                showMainPage();
-            }
+            // 返回上一页（index）
+            window.history.back();
         }
     </script>
 </body>
 </html>
+
