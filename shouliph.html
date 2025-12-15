@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>服务受理详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* 头部信息 */
+        .header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.2);
+        }
+        
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-title i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            min-width: 80px;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+        }
+        
+        /* 照片预览区域 */
+        .photos-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .photo-counter {
+            background-color: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+        
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        @media (min-width: 480px) {
+            .photos-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .photo-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            aspect-ratio: 1/1;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .photo-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .photo-number {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .photo-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            padding: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .photo-item:hover .photo-info {
+            opacity: 1;
+        }
+        
+        /* 照片查看器 */
+        .image-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .image-viewer-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .image-viewer-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+        
+        .close-image-viewer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 1001;
+        }
+        
+        .close-image-viewer:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .image-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            margin: 0 15px;
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .image-counter {
+            color: white;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+        }
+        
+        /* 底部操作按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2c80b9 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #2472a4 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 图标字体 */
+        .icon {
+            display: inline-block;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .icon-user::before { content: "👤"; }
+        .icon-time::before { content: "🕒"; }
+        .icon-camera::before { content: "📷"; }
+        .icon-back::before { content: "←"; }
+        .icon-download::before { content: "⬇"; }
+        .icon-share::before { content: "↗"; }
+        
+        /* 响应式调整 */
+        @media (max-width: 360px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .photos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header, .photos-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .photo-item {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .photo-item:nth-child(1) { animation-delay: 0.1s; }
+        .photo-item:nth-child(2) { animation-delay: 0.2s; }
+        .photo-item:nth-child(3) { animation-delay: 0.3s; }
+        .photo-item:nth-child(4) { animation-delay: 0.4s; }
+        .photo-item:nth-child(5) { animation-delay: 0.5s; }
+        .photo-item:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部信息 -->
+        <div class="header">
+            <div class="header-title">
+                <i class="icon icon-user"></i> 服务受理详情
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">受理人：</div>
+                <div class="info-value">
+                    张三 <span class="badge">520001</span>
+                </div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">受理时间：</div>
+                <div class="info-value">2025-10-14 15:30:00</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">状态：</div>
+                <div class="info-value">
+                    <span class="badge" style="background-color: rgba(255, 255, 255, 0.25);">已受理</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 照片预览区域 -->
+        <div class="photos-section">
+            <div class="section-title">
+                <i class="icon icon-camera"></i> 现场照片
+                <span class="photo-counter">6</span>
+            </div>
+            
+            <div class="photos-grid" id="photosGrid">
+                <!-- 照片会通过JavaScript动态加载 -->
+            </div>
+        </div>
+        
+        <!-- 底部操作按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="goBack()">
+                <i class="icon icon-back"></i> 返回
+            </button>
+            <button class="btn btn-primary" onclick="downloadAll()">
+                <i class="icon icon-download"></i> 下载照片
+            </button>
+        </div>
+    </div>
+    
+    <!-- 照片查看器 -->
+    <div id="imageViewerModal" class="image-viewer-modal">
+        <button class="close-image-viewer" onclick="closeImageViewer()">×</button>
+        
+        <div class="image-viewer-container">
+            <img id="imageViewerImg" class="image-viewer-img" src="" alt="照片预览">
+            
+            <div class="image-nav">
+                <button class="nav-btn" onclick="prevImage()">❮</button>
+                <button class="nav-btn" onclick="nextImage()">❯</button>
+            </div>
+            
+            <div id="imageCounter" class="image-counter">1 / 6</div>
+        </div>
+    </div>
+
+    <script>
+        // 照片数据
+        const photos = [
+            { id: 1, filename: '4.jpg', title: '现场照片 1', description: '安装细节图' },
+            { id: 2, filename: '5.jpg', title: '现场照片 2', description: '设备正面视图' },
+            { id: 3, filename: '6.jpg', title: '现场照片 3', description: '设备安装位置' },
+            { id: 4, filename: '7.jpg', title: '现场照片 4', description: '宽带测速' },
+            { id: 5, filename: '8.jpg', title: '现场照片 5', description: '安装完成图' },
+            { id: 6, filename: '9.jpg', title: '现场照片 6', description: '调试完成图' }
+        ];
+        
+        // 当前查看的照片索引
+        let currentImageIndex = 0;
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPhotos();
+            updateImageCounter();
+        });
+        
+        // 渲染照片网格
+        function renderPhotos() {
+            const photosGrid = document.getElementById('photosGrid');
+            photosGrid.innerHTML = '';
+            
+            photos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `
+                    <img src="${photo.filename}" alt="${photo.title}" onclick="openImageViewer(${index})">
+                    <div class="photo-number">${index + 1}</div>
+                    <div class="photo-info">${photo.description}</div>
+                `;
+                photosGrid.appendChild(photoItem);
+            });
+        }
+        
+        // 打开图片查看器
+        function openImageViewer(index) {
+            currentImageIndex = index;
+            const photo = photos[currentImageIndex];
+            document.getElementById('imageViewerImg').src = photo.filename;
+            updateImageCounter();
+            document.getElementById('imageViewerModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // 防止页面滚动
+        }
+        
+        // 关闭图片查看器
+        function closeImageViewer() {
+            document.getElementById('imageViewerModal').style.display = 'none';
+            document.body.style.overflow = ''; // 恢复页面滚动
+        }
+        
+        // 上一张图片
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + photos.length) % photos.length;
+            const photo = photos[currentImageIndex];
+            document.getElementById('imageViewerImg').src = photo.filename;
+            updateImageCounter();
+        }
+        
+        // 下一张图片
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % photos.length;
+            const photo = photos[currentImageIndex];
+            document.getElementById('imageViewerImg').src = photo.filename;
+            updateImageCounter();
+        }
+        
+        // 更新图片计数器
+        function updateImageCounter() {
+            document.getElementById('imageCounter').textContent = 
+                `${currentImageIndex + 1} / ${photos.length}`;
+        }
+        
+        // 下载所有照片
+        function downloadAll() {
+            if (confirm('确定要下载所有现场照片吗？')) {
+                showNotification('开始下载照片...');
+                
+                // 模拟下载过程
+                setTimeout(() => {
+                    showNotification('照片下载完成！');
+                    
+                    // 在实际应用中，这里会实现真实的下载功能
+                    // 可以创建一个ZIP文件包含所有照片
+                }, 1500);
+            }
+        }
+        
+        // 返回上一页
+        function goBack() {
+            
+            showNotification('返回上一页');
+      window.location.href = 'html2.html';      
+            // 模拟返回操作
+            setTimeout(() => {
+                // 在实际应用中，这里会执行页面跳转
+                console.log('返回操作已执行');
+            }, 500);
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            // 移除可能存在的旧通知
+            const oldNotification = document.querySelector('.notification');
+            if (oldNotification) {
+                document.body.removeChild(oldNotification);
+            }
+            
+            // 创建新通知
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #2c3e50;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 25px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-weight: 500;
+                animation: slideUp 0.3s ease-out;
+            `;
+            
+            // 添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translate(-50%, 20px); }
+                    to { opacity: 1; transform: translate(-50%, 0); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后移除通知
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        // 键盘控制（左右箭头切换图片）
+        document.addEventListener('keydown', function(event) {
+            const viewer = document.getElementById('imageViewerModal');
+            if (viewer.style.display === 'flex') {
+                if (event.key === 'ArrowLeft') {
+                    prevImage();
+                } else if (event.key === 'ArrowRight') {
+                    nextImage();
+                } else if (event.key === 'Escape') {
+                    closeImageViewer();
+                }
+            }
+        });
+        
+        // 触摸滑动切换图片（移动端支持）
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+        
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const viewer = document.getElementById('imageViewerModal');
+            if (viewer.style.display !== 'flex') return;
+            
+            const swipeThreshold = 50;
+            const diff = touchEndX - touchStartX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // 向右滑动，上一张
+                    prevImage();
+                } else {
+                    // 向左滑动，下一张
+                    nextImage();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
